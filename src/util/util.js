@@ -3,6 +3,8 @@
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const multihashes = require('multihashes/src/constants')
 const multicodecs = require('multicodec/src/base-table')
+const multihash = require('multihashes')
+const CID = require('cids')
 
 exports = module.exports
 
@@ -24,6 +26,8 @@ exports.parsePersonLine = (line) => {
   }
 
   return {
+    original: line,
+
     name: matched[2],
     email: matched[3],
     date: matched[4],
@@ -34,9 +38,18 @@ exports.parsePersonLine = (line) => {
 exports.shaToCid = (buf) => {
   let mhashBuf = new SmartBuffer()
   mhashBuf.writeUInt8(1)
-  mhashBuf.writeUInt8(multicodecs['git-raw'])
+  mhashBuf.writeBuffer(multicodecs['git-raw'])
   mhashBuf.writeUInt8(multihashes.names.sha1)
   mhashBuf.writeUInt8(exports.SHA1_LENGTH)
   mhashBuf.writeBuffer(buf)
   return mhashBuf.toBuffer()
+}
+
+exports.cidToSha = (cidBuf) => {
+  let mh = multihash.decode(new CID(cidBuf).multihash)
+  if (mh.name !== 'sha1') {
+    return null
+  }
+
+  return mh.digest
 }

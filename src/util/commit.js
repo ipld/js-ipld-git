@@ -1,16 +1,41 @@
 'use strict'
 
 const setImmediate = require('async/setImmediate')
+const SmartBuffer = require('smart-buffer').SmartBuffer
 const gitUtil = require('./util')
 
 exports = module.exports
 
+exports.serialize = (dagNode, callback) => {
+  let lines = []
+  lines.push('tree ' + gitUtil.cidToSha(dagNode.tree['/']).toString('hex'))
+  dagNode.parents.forEach((parent) => {
+    lines.push('parent ' + gitUtil.cidToSha(parent['/']).toString('hex'))
+  })
+  lines.push('author ' + dagNode.author.original)
+  lines.push('committer ' + dagNode.committer.original)
+  if (dagNode.encoding !== undefined) {
+    lines.push('encoding ' + dagNode.encoding)
+  }
+  lines.push('')
+  lines.push(dagNode.message)
+
+  let data = lines.join('\n')
+
+  let outBuf = new SmartBuffer()
+  outBuf.writeString('commit ')
+  outBuf.writeString(data.length.toString())
+  outBuf.writeUInt8(0)
+  outBuf.writeString(data)
+  setImmediate(() => callback(null, outBuf.toBuffer()))
+}
+
 exports.deserialize = (data, callback) => {
   let lines = data.toString().split('\n')
-  let res = {parents: []}
+  let res = {gitType: 'commit', parents: []}
 
   for (let line = 0; line < lines.length; line++) {
-    let m = lines[line].match(/([^ ]+) (.+)$/)
+    let m = lines[line].match(/^([^ ]+) (.+)$/)
     if (m === null) {
       if (lines[line] !== '') {
         setImmediate(() => callback(new Error('Invalid tag line ' + line)))
@@ -23,7 +48,7 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'tree':
-        res['tree'] = gitUtil.shaToCid(new Buffer(value, 'hex'))
+        res['tree'] = {'/': gitUtil.shaToCid(new Buffer(value, 'hex'))}
         break
       case 'committer':
         res['committer'] = gitUtil.parsePersonLine(value)
@@ -32,7 +57,7 @@ exports.deserialize = (data, callback) => {
         res['author'] = gitUtil.parsePersonLine(value)
         break
       case 'parent':
-        res.parents.push(gitUtil.shaToCid(new Buffer(value, 'hex')))
+        res.parents.push({'/': gitUtil.shaToCid(new Buffer(value, 'hex'))})
         break
       default:
         res[key] = value

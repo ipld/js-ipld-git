@@ -11,6 +11,7 @@ const loadFixture = require('aegir/fixtures')
 const zlib = require('zlib')
 const ipldGit = require('../src')
 const util = require('../src/util/util')
+const waterfall = require('async/waterfall')
 
 const testObjectsJSON = require('./fixtures/objects.json')
 
@@ -87,11 +88,26 @@ describe('git object parsing', () => {
   })
 
   it('is parsing and serializing properly', (done) => {
-    objects.forEach(function (object) {
-      ipldGit.util.deserialize(object[1], (err, node) => {
-        expect(err).to.not.exist()
-      })
-    })
-    done()
+    waterfall(objects.map((object) => {
+      return (cb) => {
+        ipldGit.util.deserialize(object[1], (err, node) => {
+          expect(err).to.not.exist()
+          expect(node).to.exist()
+
+          let expCid = util.shaToCid(new Buffer(object[0], 'hex'))
+
+          ipldGit.util.cid(node, (err, cid) => {
+            expect(err).to.not.exist()
+            expect(cid).to.exist()
+
+            expect(cid.buffer.toString('hex')).to.equal(expCid.toString('hex'), 'expected '
+              + object[0] + ', got ' + cid.toBaseEncodedString('base16') + ', objtype '
+              + node._objtype + ', blob:' + Buffer.isBuffer(node))
+
+            cb(null)
+          })
+        })
+      }
+    }), done)
   })
 })

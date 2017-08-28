@@ -15,7 +15,31 @@ const tree = require('./util/tree')
 exports = module.exports
 
 exports.serialize = (dagNode, callback) => {
-  setImmediate(() => callback(new Error('not implemented'), null))
+  if (dagNode === null) {
+    setImmediate(() => callback(new Error('dagNode passed to serialize was null'), null))
+    return
+  }
+
+  if (Buffer.isBuffer(dagNode)) {
+    if (dagNode.slice(0, 4).toString() === 'blob') {
+      setImmediate(() => callback(null, dagNode))
+    } else {
+      setImmediate(() => callback(new Error('unexpected dagNode passed to serialize'), null))
+    }
+    return
+  }
+
+  switch (dagNode.gitType) {
+    case 'commit':
+      commit.serialize(dagNode, callback)
+      break
+    case 'tag':
+      tag.serialize(dagNode, callback)
+      break
+    default:
+      // assume tree as a file named 'type' is legal
+      tree.serialize(dagNode, callback)
+  }
 }
 
 exports.deserialize = (data, callback) => {
