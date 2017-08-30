@@ -12,7 +12,7 @@ exports.serialize = (dagNode, callback) => {
   lines.push('type ' + dagNode.type)
   lines.push('tag ' + dagNode.tag)
   if (dagNode.tagger !== null) {
-    lines.push('tagger ' + dagNode.tagger.original)
+    lines.push('tagger ' + gitUtil.serializePersonLine(dagNode.tagger))
   }
   lines.push('')
   lines.push(dagNode.message)
@@ -37,7 +37,7 @@ exports.deserialize = (data, callback) => {
       if (lines[line] !== '') {
         setImmediate(() => callback(new Error('Invalid tag line ' + line)))
       }
-      res['message'] = lines.slice(line + 1).join('\n')
+      res.message = lines.slice(line + 1).join('\n')
       break
     }
 
@@ -45,16 +45,16 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'object':
-        res['object'] = {'/': gitUtil.shaToCid(new Buffer(value, 'hex'))}
+        res.object = {'/': gitUtil.shaToCid(new Buffer(value, 'hex'))}
         break
       case 'tagger':
-        res['tagger'] = gitUtil.parsePersonLine(value)
+        res.tagger = gitUtil.parsePersonLine(value)
         break
       case 'tag':
-        res['tag'] = value
+        res.tag = value
         break
       case 'type':
-        res['type'] = value
+        res.type = value
         break
       default:
         res[key] = value

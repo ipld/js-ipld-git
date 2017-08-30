@@ -12,8 +12,8 @@ exports.serialize = (dagNode, callback) => {
   dagNode.parents.forEach((parent) => {
     lines.push('parent ' + gitUtil.cidToSha(parent['/']).toString('hex'))
   })
-  lines.push('author ' + dagNode.author.original)
-  lines.push('committer ' + dagNode.committer.original)
+  lines.push('author ' + gitUtil.serializePersonLine(dagNode.author))
+  lines.push('committer ' + gitUtil.serializePersonLine(dagNode.committer))
   if (dagNode.encoding !== undefined) {
     lines.push('encoding ' + dagNode.encoding)
   }
@@ -36,11 +36,11 @@ exports.deserialize = (data, callback) => {
 
   for (let line = 0; line < lines.length; line++) {
     let m = lines[line].match(/^([^ ]+) (.+)$/)
-    if (m === null) {
+    if (!m) {
       if (lines[line] !== '') {
         setImmediate(() => callback(new Error('Invalid tag line ' + line)))
       }
-      res['message'] = lines.slice(line + 1).join('\n')
+      res.message = lines.slice(line + 1).join('\n')
       break
     }
 
@@ -48,13 +48,13 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'tree':
-        res['tree'] = {'/': gitUtil.shaToCid(new Buffer(value, 'hex'))}
+        res.tree = {'/': gitUtil.shaToCid(new Buffer(value, 'hex'))}
         break
       case 'committer':
-        res['committer'] = gitUtil.parsePersonLine(value)
+        res.committer = gitUtil.parsePersonLine(value)
         break
       case 'author':
-        res['author'] = gitUtil.parsePersonLine(value)
+        res.author = gitUtil.parsePersonLine(value)
         break
       case 'parent':
         res.parents.push({'/': gitUtil.shaToCid(new Buffer(value, 'hex'))})

@@ -22,8 +22,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.equal('Someone')
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456')
-      expect(info.timezone).to.equal('+0123')
+      expect(info.date).to.equal('123456 +0123')
       done()
     })
 
@@ -32,8 +31,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.equal('So Me One')
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456')
-      expect(info.timezone).to.equal('+0123')
+      expect(info.date).to.equal('123456 +0123')
       done()
     })
 
@@ -42,8 +40,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.not.exist()
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456')
-      expect(info.timezone).to.equal('+0123')
+      expect(info.date).to.equal('123456 +0123')
       done()
     })
 
@@ -52,8 +49,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.not.exist()
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456')
-      expect(info.timezone).to.equal('+0123')
+      expect(info.date).to.equal('123456 +0123')
       done()
     })
 
@@ -62,8 +58,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.equal('Some One & Other One')
       expect(info.email).to.equal('some@one.somewhere, other@one.elsewhere')
-      expect(info.date).to.equal('987654')
-      expect(info.timezone).to.equal('+4321')
+      expect(info.date).to.equal('987654 +4321')
       done()
     })
 
@@ -73,7 +68,6 @@ describe('utils', () => {
       expect(info.name).to.equal('Someone')
       expect(info.email).to.equal('some.one@some.where')
       expect(info.date).to.not.exist()
-      expect(info.timezone).to.not.exist()
       done()
     })
   })
@@ -100,9 +94,9 @@ describe('git object parsing', () => {
             expect(err).to.not.exist()
             expect(cid).to.exist()
 
-            expect(cid.buffer.toString('hex')).to.equal(expCid.toString('hex'), 'expected '
-              + object[0] + ', got ' + cid.toBaseEncodedString('base16') + ', objtype '
-              + node._objtype + ', blob:' + Buffer.isBuffer(node))
+            expect(cid.buffer.toString('hex')).to.equal(expCid.toString('hex'), 'expected ' +
+              object[0] + ', got ' + cid.toBaseEncodedString('base16') + ', objtype ' +
+              node._objtype + ', blob:' + Buffer.isBuffer(node))
 
             cb(null)
           })

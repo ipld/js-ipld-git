@@ -46,7 +46,7 @@ exports.deserialize = (data, callback) => {
   let headLen = gitUtil.find(data, 0)
   let head = data.slice(0, headLen).toString()
   let typeLen = head.match(/([^ ]+) (\d+)/)
-  if (typeLen === null) {
+  if (!typeLen) {
     setImmediate(() => callback(new Error('invalid object header'), null))
   }
 

@@ -38,11 +38,11 @@ exports.deserialize = (data, callback) => {
 
     let hash = buf.readBuffer(gitUtil.SHA1_LENGTH)
     let modNameMatched = modeName.match(/^(\d+) (.+)$/)
-    if (modNameMatched === null) {
+    if (!modNameMatched) {
       setImmediate(() => callback(new Error('invalid file mode/name')))
     }
 
-    if (res[modNameMatched[2]] !== undefined) {
+    if (res[modNameMatched[2]]) {
       setImmediate(() => callback(new Error('duplicate file in tree')))
     }
 

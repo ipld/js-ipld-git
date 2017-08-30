@@ -20,19 +20,29 @@ exports.find = (buf, byte) => {
 }
 
 exports.parsePersonLine = (line) => {
-  let matched = line.match(/^(([^<]+)\s)?\s?<([^>]+)>\s?(\d+)?\s?([+\-\d]+)?$/)
+  let matched = line.match(/^(([^<]+)\s)?\s?<([^>]+)>\s?(\d+\s[+\-\d]+)?$/)
   if (matched === null) {
     return null
   }
 
   return {
-    original: line,
-
     name: matched[2],
     email: matched[3],
-    date: matched[4],
-    timezone: matched[5]
+    date: matched[4]
   }
+}
+
+exports.serializePersonLine = (node) => {
+  let parts = []
+  if (node.name) {
+    parts.push(node.name)
+  }
+  parts.push('<' + node.email + '>')
+  if (node.date) {
+    parts.push(node.date)
+  }
+
+  return parts.join(' ')
 }
 
 exports.shaToCid = (buf) => {
