@@ -1,5 +1,6 @@
 #!/bin/bash
 
+ls . | awk -F '' 'NF == 40' | xargs rm
 rm testdata.tar.gz -f
 wget https://github.com/ipfs/go-ipld-git/raw/master/testdata.tar.gz
 tar xzf testdata.tar.gz

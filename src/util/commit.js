@@ -14,8 +14,13 @@ exports.serialize = (dagNode, callback) => {
   })
   lines.push('author ' + gitUtil.serializePersonLine(dagNode.author))
   lines.push('committer ' + gitUtil.serializePersonLine(dagNode.committer))
-  if (dagNode.encoding !== undefined) {
+  if (dagNode.encoding) {
     lines.push('encoding ' + dagNode.encoding)
+  }
+  if (dagNode.signature) {
+    lines.push('gpgsig -----BEGIN PGP SIGNATURE-----')
+    lines.push(dagNode.signature.text)
+    lines.push(' -----END PGP SIGNATURE-----')
   }
   lines.push('')
   lines.push(dagNode.message)
@@ -38,7 +43,7 @@ exports.deserialize = (data, callback) => {
     let m = lines[line].match(/^([^ ]+) (.+)$/)
     if (!m) {
       if (lines[line] !== '') {
-        setImmediate(() => callback(new Error('Invalid tag line ' + line)))
+        setImmediate(() => callback(new Error('Invalid commit line ' + line)))
       }
       res.message = lines.slice(line + 1).join('\n')
       break
@@ -59,6 +64,22 @@ exports.deserialize = (data, callback) => {
       case 'parent':
         res.parents.push({'/': gitUtil.shaToCid(new Buffer(value, 'hex'))})
         break
+      case 'gpgsig': {
+        if (value !== '-----BEGIN PGP SIGNATURE-----') {
+          setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+        }
+        res.signature = {}
+
+        let startLine = line
+        for (; line < lines.length - 1; line++) {
+          if (lines[line + 1] === ' -----END PGP SIGNATURE-----') {
+            res.signature.text = lines.slice(startLine + 1, line + 1).join('\n')
+            break
+          }
+        }
+        line++
+        break
+      }
       default:
         res[key] = value
     }
