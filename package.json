@@ -40,16 +40,16 @@
     "async": "^2.5.0",
     "cids": "~0.5.1",
     "multicodec": "~0.1.9",
-    "multihashes": "~0.4.8",
+    "multihashes": "~0.4.9",
     "multihashing-async": "~0.4.6",
     "smart-buffer": "^3.0.3",
     "traverse": "^~0.6.6"
   },
   "devDependencies": {
-    "aegir": "^11.0.1",
-    "chai": "^3.5.0",
+    "aegir": "^11.0.2",
+    "chai": "^4.1.2",
     "deep-freeze": "0.0.1",
-    "dirty-chai": "^1.2.2",
+    "dirty-chai": "^2.0.1",
     "garbage": "0.0.0",
     "ipfs-block": "~0.6.0",
     "pre-commit": "^1.2.2"
