@@ -48,6 +48,7 @@ exports.deserialize = (data, callback) => {
   let typeLen = head.match(/([^ ]+) (\d+)/)
   if (!typeLen) {
     setImmediate(() => callback(new Error('invalid object header'), null))
+    return
   }
 
   switch (typeLen[1]) {

@@ -118,7 +118,7 @@ exports.tree = (block, options, callback) => {
         ]
 
         if (node.tagger) {
-          paths = paths.concat(personInfoPaths.map(e => 'tagger/' + e))
+          paths = paths.concat(personInfoPaths.map((e) => 'tagger/' + e))
         }
 
         break

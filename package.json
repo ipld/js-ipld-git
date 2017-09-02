@@ -38,12 +38,12 @@
   "homepage": "https://github.com/ipld/js-ipld-git",
   "dependencies": {
     "async": "^2.5.0",
-    "cids": "^0.5.1",
-    "multicodec": "^0.1.9",
-    "multihashes": "^0.4.8",
-    "multihashing-async": "^0.4.6",
+    "cids": "~0.5.1",
+    "multicodec": "~0.1.9",
+    "multihashes": "~0.4.8",
+    "multihashing-async": "~0.4.6",
     "smart-buffer": "^3.0.3",
-    "traverse": "^0.6.6"
+    "traverse": "^~0.6.6"
   },
   "devDependencies": {
     "aegir": "^11.0.1",
