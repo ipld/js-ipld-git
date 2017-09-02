@@ -32,7 +32,7 @@
     "url": "https://github.com/ipld/js-ipld-git/issues"
   },
   "engines": {
-    "node": ">=4.0.0",
+    "node": ">=6.0.0",
     "npm": ">=3.0.0"
   },
   "homepage": "https://github.com/ipld/js-ipld-git",
@@ -43,7 +43,7 @@
     "multihashes": "~0.4.9",
     "multihashing-async": "~0.4.6",
     "smart-buffer": "^3.0.3",
-    "traverse": "^~0.6.6"
+    "traverse": "~0.6.6"
   },
   "devDependencies": {
     "aegir": "^11.0.2",
