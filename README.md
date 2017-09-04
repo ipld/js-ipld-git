@@ -1,4 +1,4 @@
-# js-ipld-dag-cbor
+# js-ipld-git
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
 [![](https://img.shields.io/badge/project-IPLD-blue.svg?style=flat-square)](http://github.com/ipld/ipld)
@@ -50,7 +50,7 @@ var Git = require('ipld-git')
 
 ### Use in a browser Using a script tag
 
-Loading this module through a script tag will make the `IpldDagCbor` obj available in the global namespace.
+Loading this module through a script tag will make the `IpldGit` obj available in the global namespace.
 
 ```html
 <script src="https://unpkg.com/ipld-git/dist/index.min.js"></script>
