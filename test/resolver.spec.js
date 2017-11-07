@@ -68,7 +68,7 @@ describe('IPLD format resolver (local)', () => {
       }
     }
 
-    const blobNode = new Buffer('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
+    const blobNode = Buffer.from('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
 
     waterfall([
       (cb) => parallel([

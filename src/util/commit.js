@@ -52,7 +52,7 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'tree':
-        res.tree = {'/': gitUtil.shaToCid(new Buffer(value, 'hex'))}
+        res.tree = {'/': gitUtil.shaToCid(Buffer.from(value, 'hex'))}
         break
       case 'committer':
         res.committer = gitUtil.parsePersonLine(value)
@@ -61,7 +61,7 @@ exports.deserialize = (data, callback) => {
         res.author = gitUtil.parsePersonLine(value)
         break
       case 'parent':
-        res.parents.push({'/': gitUtil.shaToCid(new Buffer(value, 'hex'))})
+        res.parents.push({'/': gitUtil.shaToCid(Buffer.from(value, 'hex'))})
         break
       case 'gpgsig': {
         if (value !== '-----BEGIN PGP SIGNATURE-----') {

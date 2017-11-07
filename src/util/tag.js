@@ -45,7 +45,7 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'object':
-        res.object = {'/': gitUtil.shaToCid(new Buffer(value, 'hex'))}
+        res.object = {'/': gitUtil.shaToCid(Buffer.from(value, 'hex'))}
         break
       case 'tagger':
         res.tagger = gitUtil.parsePersonLine(value)
