@@ -20,7 +20,6 @@ exports.serialize = (dagNode, callback) => {
   if (dagNode.signature) {
     lines.push('gpgsig -----BEGIN PGP SIGNATURE-----')
     lines.push(dagNode.signature.text)
-    lines.push(' -----END PGP SIGNATURE-----')
   }
   lines.push('')
   lines.push(dagNode.message)
@@ -72,12 +71,11 @@ exports.deserialize = (data, callback) => {
 
         let startLine = line
         for (; line < lines.length - 1; line++) {
-          if (lines[line + 1] === ' -----END PGP SIGNATURE-----') {
+          if (lines[line + 1][0] !== ' ') {
             res.signature.text = lines.slice(startLine + 1, line + 1).join('\n')
             break
           }
         }
-        line++
         break
       }
       default:

@@ -101,9 +101,9 @@ exports.tree = (block, options, callback) => {
           'tree'
         ]
 
-        paths = paths.concat(personInfoPaths.map(e => 'author/' + e))
-        paths = paths.concat(personInfoPaths.map(e => 'committer/' + e))
-        paths = paths.concat([...node.parents.keys()].map(e => 'parents/' + e))
+        paths = paths.concat(personInfoPaths.map((e) => 'author/' + e))
+        paths = paths.concat(personInfoPaths.map((e) => 'committer/' + e))
+        paths = paths.concat(node.parents.map((_, e) => 'parents/' + e))
 
         if (node.encoding) {
           paths.push('encoding')
