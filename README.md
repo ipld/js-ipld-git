@@ -3,11 +3,11 @@
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
 [![](https://img.shields.io/badge/project-IPLD-blue.svg?style=flat-square)](http://github.com/ipld/ipld)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
-[![Coverage](https://coveralls.io/repos/github/ipld/js-ipld-dag-cbor/badge.svg?branch=master)](https://coveralls.io/github/ipld/js-ipld-dag-cbor?branch=master)
-[![Travis](https://travis-ci.org/ipld/js-ipld-dag-cbor.svg?branch=master)](https://travis-ci.org/ipld/js-ipld-dag-cbor)
-[![Circle](https://circleci.com/gh/ipld/js-ipld-dag-cbor.svg?style=svg)](https://circleci.com/gh/ipld/js-ipld-dag-cbor)
+[![Coverage](https://coveralls.io/repos/github/ipld/js-ipld-git/badge.svg?branch=master)](https://coveralls.io/github/ipld/js-ipld-git?branch=master)
+[![Travis](https://travis-ci.org/ipld/js-ipld-git.svg?branch=master)](https://travis-ci.org/ipld/js-ipld-git)
+[![Circle](https://circleci.com/gh/ipld/js-ipld-git.svg?style=svg)](https://circleci.com/gh/ipld/js-ipld-git)
 [![](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![](https://david-dm.org/ipld/js-ipld-dag-cbor.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld-dag-cbor)
+[![](https://david-dm.org/ipld/js-ipld-git.svg?style=flat-square)](https://david-dm.org/ipld/js-ipld-git)
 [![](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 ![](https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square)
 ![](https://img.shields.io/badge/Node.js-%3E%3D6.0.0-orange.svg?style=flat-square)
@@ -72,7 +72,7 @@ const Git = require('ipld-git')
 
 ## Contribute
 
-Feel free to join in. All welcome. Open an [issue](https://github.com/ipld/js-ipld-dag-cbor/issues)!
+Feel free to join in. All welcome. Open an [issue](https://github.com/ipld/js-ipld-git/issues)!
 
 Check out our [contributing document](https://github.com/ipld/ipld/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to IPLD are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
