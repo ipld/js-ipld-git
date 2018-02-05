@@ -7,21 +7,18 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const Block = require('ipfs-block')
-const map = require('async/map')
 const waterfall = require('async/waterfall')
 const parallel = require('async/parallel')
 const CID = require('cids')
-const multihashing = require('multihashing-async')
 
 const ipldGit = require('../src')
 const resolver = ipldGit.resolver
 
 describe('IPLD format resolver (local)', () => {
-  let commitBlock
-  let tagBlock
-  let treeBlock
-  let blobBlock
+  let commitBlob
+  let tagBlob
+  let treeBlob
+  let blobBlob
 
   before((done) => {
     const commitNode = {
@@ -77,17 +74,11 @@ describe('IPLD format resolver (local)', () => {
         (cb) => ipldGit.util.serialize(treeNode, cb),
         (cb) => ipldGit.util.serialize(blobNode, cb)
       ], cb),
-      (res, cb) => map(res, (s, cb) => {
-        multihashing(s, 'sha1', (err, multihash) => {
-          expect(err).to.not.exist()
-          cb(null, new Block(s, new CID(multihash)))
-        })
-      }, cb),
       (blocks, cb) => {
-        commitBlock = blocks[0]
-        tagBlock = blocks[1]
-        treeBlock = blocks[2]
-        blobBlock = blocks[3]
+        commitBlob = blocks[0]
+        tagBlob = blocks[1]
+        treeBlob = blocks[2]
+        blobBlob = blocks[3]
         cb()
       }
     ], done)
@@ -95,7 +86,7 @@ describe('IPLD format resolver (local)', () => {
 
   describe('commit', () => {
     it('resolver.tree', (done) => {
-      resolver.tree(commitBlock, (err, paths) => {
+      resolver.tree(commitBlob, (err, paths) => {
         expect(err).to.not.exist()
 
         expect(paths).to.eql([
@@ -118,7 +109,7 @@ describe('IPLD format resolver (local)', () => {
     })
 
     it('resolver.isLink with valid Link', (done) => {
-      resolver.isLink(commitBlock, 'tree', (err, link) => {
+      resolver.isLink(commitBlob, 'tree', (err, link) => {
         expect(err).to.not.exist()
         const linkCID = new CID(link['/'])
         expect(CID.isCID(linkCID)).to.equal(true)
@@ -127,7 +118,7 @@ describe('IPLD format resolver (local)', () => {
     })
 
     it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(commitBlock, '', (err, link) => {
+      resolver.isLink(commitBlob, '', (err, link) => {
         expect(err).to.not.exist()
         expect(link).to.equal(false)
         done()
@@ -136,7 +127,7 @@ describe('IPLD format resolver (local)', () => {
 
     describe('resolver.resolve', () => {
       it('path within scope', (done) => {
-        resolver.resolve(commitBlock, 'message', (err, result) => {
+        resolver.resolve(commitBlob, 'message', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.equal('Encoded\n')
           done()
@@ -144,7 +135,7 @@ describe('IPLD format resolver (local)', () => {
       })
 
       it('path within scope, but nested', (done) => {
-        resolver.resolve(commitBlock, 'author/name', (err, result) => {
+        resolver.resolve(commitBlob, 'author/name', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.equal('John Doe')
           done()
@@ -152,7 +143,7 @@ describe('IPLD format resolver (local)', () => {
       })
 
       it('path out of scope', (done) => {
-        resolver.resolve(commitBlock, 'tree/foo/hash/bar/mode', (err, result) => {
+        resolver.resolve(commitBlob, 'tree/foo/hash/bar/mode', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql({
             '/': new CID('z8mWaJ1dZ9fH5EetPuRsj8jj26pXsgpsr').buffer
@@ -166,7 +157,7 @@ describe('IPLD format resolver (local)', () => {
 
   describe('tag', () => {
     it('resolver.tree', (done) => {
-      resolver.tree(tagBlock, (err, paths) => {
+      resolver.tree(tagBlob, (err, paths) => {
         expect(err).to.not.exist()
 
         expect(paths).to.eql([
@@ -185,7 +176,7 @@ describe('IPLD format resolver (local)', () => {
     })
 
     it('resolver.isLink with valid Link', (done) => {
-      resolver.isLink(tagBlock, 'object', (err, link) => {
+      resolver.isLink(tagBlob, 'object', (err, link) => {
         expect(err).to.not.exist()
         const linkCID = new CID(link['/'])
         expect(CID.isCID(linkCID)).to.equal(true)
@@ -194,7 +185,7 @@ describe('IPLD format resolver (local)', () => {
     })
 
     it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(tagBlock, '', (err, link) => {
+      resolver.isLink(tagBlob, '', (err, link) => {
         expect(err).to.not.exist()
         expect(link).to.equal(false)
         done()
@@ -203,7 +194,7 @@ describe('IPLD format resolver (local)', () => {
 
     describe('resolver.resolve', () => {
       it('path within scope', (done) => {
-        resolver.resolve(tagBlock, 'message', (err, result) => {
+        resolver.resolve(tagBlob, 'message', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.equal('A message\n')
           done()
@@ -211,7 +202,7 @@ describe('IPLD format resolver (local)', () => {
       })
 
       it('path within scope, but nested', (done) => {
-        resolver.resolve(tagBlock, 'tagger/name', (err, result) => {
+        resolver.resolve(tagBlob, 'tagger/name', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.equal('John Doe')
           done()
@@ -219,7 +210,7 @@ describe('IPLD format resolver (local)', () => {
       })
 
       it('path out of scope', (done) => {
-        resolver.resolve(tagBlock, 'object/tree/foo/mode', (err, result) => {
+        resolver.resolve(tagBlob, 'object/tree/foo/mode', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql({
             '/': new CID('z8mWaHQaEAKd5KMRNU3npB3saSZmhFh3e').buffer
@@ -233,7 +224,7 @@ describe('IPLD format resolver (local)', () => {
 
   describe('tree', () => {
     it('resolver.tree', (done) => {
-      resolver.tree(treeBlock, (err, paths) => {
+      resolver.tree(treeBlob, (err, paths) => {
         expect(err).to.not.exist()
 
         expect(paths).to.eql([
@@ -250,7 +241,7 @@ describe('IPLD format resolver (local)', () => {
     })
 
     it('resolver.isLink with valid Link', (done) => {
-      resolver.isLink(treeBlock, 'somefile/hash', (err, link) => {
+      resolver.isLink(treeBlob, 'somefile/hash', (err, link) => {
         expect(err).to.not.exist()
         const linkCID = new CID(link['/'])
         expect(CID.isCID(linkCID)).to.equal(true)
@@ -259,7 +250,7 @@ describe('IPLD format resolver (local)', () => {
     })
 
     it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(treeBlock, '', (err, link) => {
+      resolver.isLink(treeBlob, '', (err, link) => {
         expect(err).to.not.exist()
         expect(link).to.equal(false)
         done()
@@ -268,7 +259,7 @@ describe('IPLD format resolver (local)', () => {
 
     describe('resolver.resolve', () => {
       it('path within scope, nested', (done) => {
-        resolver.resolve(treeBlock, 'somedir/mode', (err, result) => {
+        resolver.resolve(treeBlob, 'somedir/mode', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.equal('40000')
           done()
@@ -276,7 +267,7 @@ describe('IPLD format resolver (local)', () => {
       })
 
       it('path out of scope', (done) => {
-        resolver.resolve(treeBlock, 'somedir/hash/subfile/mode', (err, result) => {
+        resolver.resolve(treeBlob, 'somedir/hash/subfile/mode', (err, result) => {
           expect(err).to.not.exist()
           expect(result.value).to.eql({
             '/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer
@@ -290,7 +281,7 @@ describe('IPLD format resolver (local)', () => {
 
   describe('blob', () => {
     it('resolver.tree', (done) => {
-      resolver.tree(blobBlock, (err, paths) => {
+      resolver.tree(blobBlob, (err, paths) => {
         expect(err).to.not.exist()
         expect(paths).to.eql([])
         done()
@@ -298,7 +289,7 @@ describe('IPLD format resolver (local)', () => {
     })
 
     it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(treeBlock, '', (err, link) => {
+      resolver.isLink(treeBlob, '', (err, link) => {
         expect(err).to.not.exist()
         expect(link).to.equal(false)
         done()

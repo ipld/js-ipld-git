@@ -14,13 +14,13 @@ const personInfoPaths = [
   'date'
 ]
 
-exports.resolve = (block, path, callback) => {
+exports.resolve = (binaryBlob, path, callback) => {
   if (typeof path === 'function') {
     callback = path
     path = undefined
   }
 
-  util.deserialize(block.data, (err, node) => {
+  util.deserialize(binaryBlob, (err, node) => {
     if (err) {
       return callback(err)
     }
@@ -76,7 +76,7 @@ exports.resolve = (block, path, callback) => {
   })
 }
 
-exports.tree = (block, options, callback) => {
+exports.tree = (binaryBlob, options, callback) => {
   if (typeof options === 'function') {
     callback = options
     options = undefined
@@ -84,7 +84,7 @@ exports.tree = (block, options, callback) => {
 
   options = options || {}
 
-  util.deserialize(block.data, (err, node) => {
+  util.deserialize(binaryBlob, (err, node) => {
     if (err) {
       return callback(err)
     }
@@ -133,8 +133,8 @@ exports.tree = (block, options, callback) => {
   })
 }
 
-exports.isLink = (block, path, callback) => {
-  exports.resolve(block, path, (err, result) => {
+exports.isLink = (binaryBlob, path, callback) => {
+  exports.resolve(binaryBlob, path, (err, result) => {
     if (err) {
       return callback(err)
     }
