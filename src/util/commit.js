@@ -17,6 +17,12 @@ exports.serialize = (dagNode, callback) => {
   if (dagNode.encoding) {
     lines.push('encoding ' + dagNode.encoding)
   }
+  if (dagNode.mergetag) {
+    dagNode.mergetag.forEach(tag => {
+      lines.push('mergetag object ' + gitUtil.cidToSha(tag.object['/']).toString('hex'))
+      lines.push(tag.text)
+    })
+  }
   if (dagNode.signature) {
     lines.push('gpgsig -----BEGIN PGP SIGNATURE-----')
     lines.push(dagNode.signature.text)
@@ -78,6 +84,30 @@ exports.deserialize = (data, callback) => {
         }
         break
       }
+      case 'mergetag': {
+        let mt = value.match(/^object ([0-9a-f]{40})$/)
+        if (!mt) {
+          setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+        }
+
+        let tag = {object: {'/': gitUtil.shaToCid(Buffer.from(mt[1], 'hex'))}}
+
+        let startLine = line
+        for (; line < lines.length - 1; line++) {
+          if (lines[line + 1][0] !== ' ') {
+            tag.text = lines.slice(startLine + 1, line + 1).join('\n')
+            break
+          }
+        }
+
+        if (!res.mergetag) {
+          res.mergetag = []
+        }
+
+        res.mergetag.push(tag)
+      }
+
+        break
       default:
         res[key] = value
     }
