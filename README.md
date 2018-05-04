@@ -14,6 +14,10 @@
 
 > JavaScript implementation of the [IPLD spec](https://github.com/ipfs/specs/tree/master/ipld).
 
+## Lead Maintainer
+
+[Volker Mische](https://github.com/vmx)
+
 ## Table of Contents
 
 - [Install](#install)
@@ -22,7 +26,6 @@
   - [Use in a browser with browserify, webpack or any other bundler](#use-in-a-browser-with-browserify-webpack-or-any-other-bundler)
   - [Use in a browser Using a script tag](#use-in-a-browser-using-a-script-tag)
 - [Usage](#usage)
-- [Maintainers](#maintainers)
 - [Contribute](#contribute)
 - [License](#license)
 
@@ -65,10 +68,6 @@ const Git = require('ipld-git')
 
 // TODO
 ```
-
-## Maintainers
-
-[@magik6k](https://github.com/magik6k)
 
 ## Contribute
 
