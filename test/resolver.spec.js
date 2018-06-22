@@ -297,3 +297,15 @@ describe('IPLD format resolver (local)', () => {
     })
   })
 })
+
+describe('IPLD format resolver API properties', () => {
+  it('should have `multicodec` defined correctly', (done) => {
+    expect(resolver.multicodec).to.equal('git-raw')
+    done()
+  })
+
+  it('should have `defaultHashAlg` defined correctly', (done) => {
+    expect(resolver.defaultHashAlg).to.equal('sha1')
+    done()
+  })
+})

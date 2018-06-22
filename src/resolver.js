@@ -6,6 +6,7 @@ const traverse = require('traverse')
 exports = module.exports
 
 exports.multicodec = 'git-raw'
+exports.defaultHashAlg = 'sha1'
 
 const personInfoPaths = [
   'original',
