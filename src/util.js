@@ -69,7 +69,25 @@ exports.deserialize = (data, callback) => {
   }
 }
 
-exports.cid = (dagNode, callback) => {
+/**
+ * @callback CidCallback
+ * @param {?Error} error - Error if getting the CID failed
+ * @param {?CID} cid - CID if call was successful
+ */
+/**
+ * Get the CID of the DAG-Node.
+ *
+ * @param {Object} dagNode - Internal representation
+ * @param {Object} [options] - Ignored
+ * @param {CidCallback} callback - Callback that handles the return value
+ * @returns {void}
+ */
+exports.cid = (dagNode, options, callback) => {
+  if (options instanceof Function) {
+    callback = options
+    options = {}
+  }
+  options = options || {}
   waterfall([
     (cb) => exports.serialize(dagNode, cb),
     (serialized, cb) => multihashing(serialized, resolver.defaultHashAlg, cb),
