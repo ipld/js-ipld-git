@@ -83,7 +83,7 @@ exports.deserialize = (data, callback) => {
  * @returns {void}
  */
 exports.cid = (dagNode, options, callback) => {
-  if (options instanceof Function) {
+  if (typeof options === 'function') {
     callback = options
     options = {}
   }
