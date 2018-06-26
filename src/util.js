@@ -1,5 +1,6 @@
 'use strict'
 
+const assert = require('assert')
 const setImmediate = require('async/setImmediate')
 const waterfall = require('async/waterfall')
 const multihashing = require('multihashing-async')
@@ -77,20 +78,20 @@ exports.deserialize = (data, callback) => {
 /**
  * Get the CID of the DAG-Node.
  *
- * @param {Object} dagNode - Internal representation
+ * @param {Buffer} blob - Serialized binary data
  * @param {Object} [options] - Ignored
  * @param {CidCallback} callback - Callback that handles the return value
  * @returns {void}
  */
-exports.cid = (dagNode, options, callback) => {
+exports.cid = (blob, options, callback) => {
+  assert(Buffer.isBuffer(blob), 'blob must be a Buffer')
   if (typeof options === 'function') {
     callback = options
     options = {}
   }
   options = options || {}
   waterfall([
-    (cb) => exports.serialize(dagNode, cb),
-    (serialized, cb) => multihashing(serialized, resolver.defaultHashAlg, cb),
+    (cb) => multihashing(blob, resolver.defaultHashAlg, cb),
     (mh, cb) => cb(null, new CID(1, resolver.multicodec, mh))
   ], callback)
 }
