@@ -76,9 +76,9 @@ exports.deserialize = (data, callback) => {
  * @param {?CID} cid - CID if call was successful
  */
 /**
- * Get the CID of the DAG-Node.
+ * Get the CID of the serialized Git node.
  *
- * @param {Buffer} blob - Serialized binary data
+ * @param {Buffer} blob - Serialized Git node
  * @param {Object} [options] - Ignored
  * @param {CidCallback} callback - Callback that handles the return value
  * @returns {void}
