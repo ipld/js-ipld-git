@@ -90,7 +90,7 @@ describe('git object parsing', () => {
 
           let expCid = util.shaToCid(Buffer.from(object[0], 'hex'))
 
-          ipldGit.util.cid(node, (err, cid) => {
+          ipldGit.util.cid(object[1], (err, cid) => {
             expect(err).to.not.exist()
             expect(cid).to.exist()
 
