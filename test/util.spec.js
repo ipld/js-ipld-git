@@ -22,13 +22,11 @@ describe('IPLD format util', () => {
     },
     message: 'A message\n'
   }
-  let tagNodeSerialized
 
   it('.serialize and .deserialize', (done) => {
     ipldGit.util.serialize(tagNode, (err, serialized) => {
       expect(err).to.not.exist()
       expect(Buffer.isBuffer(serialized)).to.equal(true)
-      tagNodeSerialized = serialized
       ipldGit.util.deserialize(serialized, (err, deserialized) => {
         expect(err).to.not.exist()
         expect(tagNode).to.eql(deserialized)
@@ -38,7 +36,7 @@ describe('IPLD format util', () => {
   })
 
   it('.cid', (done) => {
-    ipldGit.util.cid(tagNodeSerialized, (err, cid) => {
+    ipldGit.util.cid(tagNode, (err, cid) => {
       expect(err).to.not.exist()
       expect(cid.version).to.equal(1)
       expect(cid.codec).to.equal('git-raw')
@@ -50,7 +48,7 @@ describe('IPLD format util', () => {
   })
 
   it('.cid ignores options', (done) => {
-    ipldGit.util.cid(tagNodeSerialized, { hashAlg: 'unknown' }, (err, cid) => {
+    ipldGit.util.cid(tagNode, { hashAlg: 'unknown' }, (err, cid) => {
       expect(err).to.not.exist()
       expect(cid.version).to.equal(1)
       expect(cid.codec).to.equal('git-raw')
