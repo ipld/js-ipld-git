@@ -77,7 +77,7 @@ describe('git object parsing', () => {
   let objects
 
   before((done) => {
-    objects = testObjectsJSON.map(o => [o, zlib.inflateSync(loadFixture(__dirname, '/fixtures/' + o))])
+    objects = testObjectsJSON.map(o => [o, zlib.inflateSync(loadFixture('test/fixtures/' + o))])
     done()
   })
 
