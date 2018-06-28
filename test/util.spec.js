@@ -47,14 +47,21 @@ describe('IPLD format util', () => {
     })
   })
 
-  it('.cid ignores options', (done) => {
-    ipldGit.util.cid(tagNode, { hashAlg: 'unknown' }, (err, cid) => {
+  it('.cid with options', (done) => {
+    ipldGit.util.cid(tagNode, { hashAlg: 'sha3-512' }, (err, cid) => {
       expect(err).to.not.exist()
       expect(cid.version).to.equal(1)
       expect(cid.codec).to.equal('git-raw')
       expect(cid.multihash).to.exist()
       const mh = multihash.decode(cid.multihash)
-      expect(mh.name).to.equal('sha1')
+      expect(mh.name).to.equal('sha3-512')
+      done()
+    })
+  })
+
+  it('.cid errors unknown hashAlg', (done) => {
+    ipldGit.util.cid(tagNode, { hashAlg: 'unknown' }, (err, cid) => {
+      expect(err).to.exist()
       done()
     })
   })
