@@ -78,7 +78,9 @@ exports.deserialize = (data, callback) => {
  * Get the CID of the DAG-Node.
  *
  * @param {Object} dagNode - Internal representation
- * @param {Object} [options] - Ignored
+ * @param {Object} [options] - Options to create the CID
+ * @param {number} [options.version=1] - CID version number
+ * @param {string} [options.hashAlg='sha1'] - Hashing algorithm
  * @param {CidCallback} callback - Callback that handles the return value
  * @returns {void}
  */
@@ -88,9 +90,11 @@ exports.cid = (dagNode, options, callback) => {
     options = {}
   }
   options = options || {}
+  const hashAlg = options.hashAlg || resolver.defaultHashAlg
+  const version = typeof options.version === 'undefined' ? 1 : options.version
   waterfall([
     (cb) => exports.serialize(dagNode, cb),
-    (serialized, cb) => multihashing(serialized, resolver.defaultHashAlg, cb),
-    (mh, cb) => cb(null, new CID(1, resolver.multicodec, mh))
+    (serialized, cb) => multihashing(serialized, hashAlg, cb),
+    (mh, cb) => cb(null, new CID(version, resolver.multicodec, mh))
   ], callback)
 }
