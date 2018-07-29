@@ -65,8 +65,15 @@ Loading this module through a script tag will make the `IpldGit` obj available i
 
 ```JavaScript
 const IpldGit = require('ipld-git')
+const zlib = require('zlib')
 
-// TODO
+// `gitObject` is a Buffer containing a git object
+inflatedObject = zlib.inflateSync(gitObject)
+IpldGit.util.deserialize(inflatedObject, (err, dagNode) => {
+  if (err) throw err
+  console.log(dagNode)
+})
+
 ```
 
 ## Contribute
