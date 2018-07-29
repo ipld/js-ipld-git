@@ -40,7 +40,7 @@
 ### Use in Node.js
 
 ```JavaScript
-const Git = require('ipld-git')
+const IpldGit = require('ipld-git')
 ```
 
 ### Use in a browser with browserify, webpack or any other bundler
@@ -48,7 +48,7 @@ const Git = require('ipld-git')
 The code published to npm that gets loaded on require is in fact a ES5 transpiled version with the right shims added. This means that you can require it and use with your favourite bundler without having to adjust asset management process.
 
 ```JavaScript
-var Git = require('ipld-git')
+var IpldGit = require('ipld-git')
 ```
 
 ### Use in a browser Using a script tag
@@ -64,7 +64,7 @@ Loading this module through a script tag will make the `IpldGit` obj available i
 ## Usage
 
 ```JavaScript
-const Git = require('ipld-git')
+const IpldGit = require('ipld-git')
 
 // TODO
 ```
