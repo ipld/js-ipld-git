@@ -53,10 +53,12 @@
   },
   "contributors": [
     "David Dias <daviddias.p@gmail.com>",
+    "Jonah Weissman <jonahrweissman@gmail.com>",
     "Richard Schneider <makaretu@gmail.com>",
     "Victor Bjelkholm <victorbjelkholm@gmail.com>",
     "Volker Mische <volker.mische@gmail.com>",
-    "Łukasz Magiera <magik6k@users.noreply.github.com>",
-    "Łukasz Magiera <magik6k@gmail.com>"
+    "greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>",
+    "Łukasz Magiera <magik6k@gmail.com>",
+    "Łukasz Magiera <magik6k@users.noreply.github.com>"
   ]
 }
