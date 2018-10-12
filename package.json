@@ -1,6 +1,6 @@
 {
   "name": "ipld-git",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "JavaScript Implementation of Git IPLD format",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",

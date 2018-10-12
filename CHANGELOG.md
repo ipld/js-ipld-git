@@ -1,3 +1,13 @@
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/ipld/js-ipld-git/compare/v0.2.1...v0.2.2) (2018-10-12)
+
+
+### Features
+
+* parse mergetags ([f2010df](https://github.com/ipld/js-ipld-git/commit/f2010df))
+
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.com/ipld/js-ipld-git/compare/v0.2.0...v0.2.1) (2018-06-29)
 
