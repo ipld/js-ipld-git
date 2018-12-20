@@ -12,7 +12,7 @@ const CID = require('cids')
 describe('IPLD format util', () => {
   const tagNode = {
     gitType: 'tag',
-    object: {'/': new CID('z8mWaHQaEAKd5KMRNU3npB3saSZmhFh3e').buffer},
+    object: { '/': new CID('z8mWaHQaEAKd5KMRNU3npB3saSZmhFh3e').buffer },
     type: 'commit',
     tag: 'v0.0.0',
     tagger: {

@@ -48,7 +48,7 @@ exports.deserialize = (data, callback) => {
 
     res[modNameMatched[2]] = {
       mode: modNameMatched[1],
-      hash: {'/': gitUtil.shaToCid(hash)}
+      hash: { '/': gitUtil.shaToCid(hash) }
     }
   }
 
