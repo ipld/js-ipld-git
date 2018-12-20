@@ -29,7 +29,7 @@ exports.serialize = (dagNode, callback) => {
 
 exports.deserialize = (data, callback) => {
   let lines = data.toString().split('\n')
-  let res = {gitType: 'tag'}
+  let res = { gitType: 'tag' }
 
   for (let line = 0; line < lines.length; line++) {
     let m = lines[line].match(/^([^ ]+) (.+)$/)
@@ -45,7 +45,7 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'object':
-        res.object = {'/': gitUtil.shaToCid(Buffer.from(value, 'hex'))}
+        res.object = { '/': gitUtil.shaToCid(Buffer.from(value, 'hex')) }
         break
       case 'tagger':
         res.tagger = gitUtil.parsePersonLine(value)

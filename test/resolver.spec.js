@@ -23,9 +23,9 @@ describe('IPLD format resolver (local)', () => {
   before((done) => {
     const commitNode = {
       gitType: 'commit',
-      tree: {'/': new CID('z8mWaJ1dZ9fH5EetPuRsj8jj26pXsgpsr').buffer},
+      tree: { '/': new CID('z8mWaJ1dZ9fH5EetPuRsj8jj26pXsgpsr').buffer },
       parents: [
-        {'/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer}
+        { '/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer }
       ],
       author: {
         name: 'John Doe',
@@ -43,7 +43,7 @@ describe('IPLD format resolver (local)', () => {
 
     const tagNode = {
       gitType: 'tag',
-      object: {'/': new CID('z8mWaHQaEAKd5KMRNU3npB3saSZmhFh3e').buffer},
+      object: { '/': new CID('z8mWaHQaEAKd5KMRNU3npB3saSZmhFh3e').buffer },
       type: 'commit',
       tag: 'v0.0.0',
       tagger: {
@@ -56,11 +56,11 @@ describe('IPLD format resolver (local)', () => {
 
     const treeNode = {
       somefile: {
-        hash: {'/': new CID('z8mWaJNVTadD7oum3m7f1dmarHvYhFV5b').buffer},
+        hash: { '/': new CID('z8mWaJNVTadD7oum3m7f1dmarHvYhFV5b').buffer },
         mode: '100644'
       },
       somedir: {
-        hash: {'/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer},
+        hash: { '/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer },
         mode: '40000'
       }
     }
