@@ -1,12 +1,11 @@
 'use strict'
 
-const setImmediate = require('async/setImmediate')
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const gitUtil = require('./util')
 
 exports = module.exports
 
-exports.serialize = (dagNode, callback) => {
+exports.serialize = async (dagNode) => {
   let lines = []
   lines.push('tree ' + gitUtil.cidToSha(dagNode.tree['/']).toString('hex'))
   dagNode.parents.forEach((parent) => {
@@ -37,10 +36,10 @@ exports.serialize = (dagNode, callback) => {
   outBuf.writeString(data.length.toString())
   outBuf.writeUInt8(0)
   outBuf.writeString(data)
-  setImmediate(() => callback(null, outBuf.toBuffer()))
+  return outBuf.toBuffer()
 }
 
-exports.deserialize = (data, callback) => {
+exports.deserialize = async (data) => {
   let lines = data.toString().split('\n')
   let res = { gitType: 'commit', parents: [] }
 
@@ -48,7 +47,7 @@ exports.deserialize = (data, callback) => {
     let m = lines[line].match(/^([^ ]+) (.+)$/)
     if (!m) {
       if (lines[line] !== '') {
-        setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+        throw new Error('Invalid commit line ' + line)
       }
       res.message = lines.slice(line + 1).join('\n')
       break
@@ -71,7 +70,7 @@ exports.deserialize = (data, callback) => {
         break
       case 'gpgsig': {
         if (value !== '-----BEGIN PGP SIGNATURE-----') {
-          setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+          throw new Error('Invalid commit line ' + line)
         }
         res.signature = {}
 
@@ -87,11 +86,12 @@ exports.deserialize = (data, callback) => {
       case 'mergetag': {
         let mt = value.match(/^object ([0-9a-f]{40})$/)
         if (!mt) {
-          setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+          throw new Error('Invalid commit line ' + line)
         }
 
-        let tag = { object:
-          { '/': gitUtil.shaToCid(Buffer.from(mt[1], 'hex')) }
+        let tag = {
+          object:
+            { '/': gitUtil.shaToCid(Buffer.from(mt[1], 'hex')) }
         }
 
         let startLine = line
@@ -114,6 +114,5 @@ exports.deserialize = (data, callback) => {
         res[key] = value
     }
   }
-
-  setImmediate(() => callback(null, res))
+  return res
 }

@@ -1,4 +1,3 @@
-/* eslint max-nested-callbacks: ["error", 8] */
 /* eslint-env mocha */
 'use strict'
 
@@ -7,10 +6,7 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const waterfall = require('async/waterfall')
-const parallel = require('async/parallel')
 const CID = require('cids')
-
 const ipldGit = require('../src')
 const resolver = ipldGit.resolver
 
@@ -20,7 +16,7 @@ describe('IPLD format resolver (local)', () => {
   let treeBlob
   let blobBlob
 
-  before((done) => {
+  before(async () => {
     const commitNode = {
       gitType: 'commit',
       tree: { '/': new CID('z8mWaJ1dZ9fH5EetPuRsj8jj26pXsgpsr').buffer },
@@ -66,246 +62,175 @@ describe('IPLD format resolver (local)', () => {
     }
 
     const blobNode = Buffer.from('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
-
-    waterfall([
-      (cb) => parallel([
-        (cb) => ipldGit.util.serialize(commitNode, cb),
-        (cb) => ipldGit.util.serialize(tagNode, cb),
-        (cb) => ipldGit.util.serialize(treeNode, cb),
-        (cb) => ipldGit.util.serialize(blobNode, cb)
-      ], cb),
-      (blocks, cb) => {
-        commitBlob = blocks[0]
-        tagBlob = blocks[1]
-        treeBlob = blocks[2]
-        blobBlob = blocks[3]
-        cb()
-      }
-    ], done)
+    const blocks = await Promise.all([
+      ipldGit.util.serialize(commitNode),
+      ipldGit.util.serialize(tagNode),
+      ipldGit.util.serialize(treeNode),
+      ipldGit.util.serialize(blobNode)
+    ])
+    commitBlob = blocks[0]
+    tagBlob = blocks[1]
+    treeBlob = blocks[2]
+    blobBlob = blocks[3]
   })
 
   describe('commit', () => {
-    it('resolver.tree', (done) => {
-      resolver.tree(commitBlob, (err, paths) => {
-        expect(err).to.not.exist()
-
-        expect(paths).to.eql([
-          'message',
-          'tree',
-          'author/original',
-          'author/name',
-          'author/email',
-          'author/date',
-          'committer/original',
-          'committer/name',
-          'committer/email',
-          'committer/date',
-          'parents/0',
-          'encoding'
-        ])
-
-        done()
-      })
+    it('resolver.tree', async () => {
+      const paths = await resolver.tree(commitBlob)
+      expect(paths).to.eql([
+        'message',
+        'tree',
+        'author/original',
+        'author/name',
+        'author/email',
+        'author/date',
+        'committer/original',
+        'committer/name',
+        'committer/email',
+        'committer/date',
+        'parents/0',
+        'encoding'
+      ])
     })
 
-    it('resolver.isLink with valid Link', (done) => {
-      resolver.isLink(commitBlob, 'tree', (err, link) => {
-        expect(err).to.not.exist()
-        const linkCID = new CID(link['/'])
-        expect(CID.isCID(linkCID)).to.equal(true)
-        done()
-      })
+    it('resolver.isLink with valid Link', async () => {
+      const link = await resolver.isLink(commitBlob, 'tree')
+      const linkCID = new CID(link['/'])
+      expect(CID.isCID(linkCID)).to.equal(true)
     })
 
-    it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(commitBlob, '', (err, link) => {
-        expect(err).to.not.exist()
-        expect(link).to.equal(false)
-        done()
-      })
+    it('resolver.isLink with invalid Link', async () => {
+      const link = await resolver.isLink(commitBlob, '')
+      expect(link).to.equal(false)
     })
 
     describe('resolver.resolve', () => {
-      it('path within scope', (done) => {
-        resolver.resolve(commitBlob, 'message', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.equal('Encoded\n')
-          done()
-        })
+      it('path within scope', async () => {
+        const result = await resolver.resolve(commitBlob, 'message')
+        expect(result.value).to.equal('Encoded\n')
       })
 
-      it('path within scope, but nested', (done) => {
-        resolver.resolve(commitBlob, 'author/name', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.equal('John Doe')
-          done()
-        })
+      it('path within scope, but nested', async () => {
+        const result = await resolver.resolve(commitBlob, 'author/name')
+        expect(result.value).to.equal('John Doe')
       })
 
-      it('path out of scope', (done) => {
-        resolver.resolve(commitBlob, 'tree/foo/hash/bar/mode', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql({
-            '/': new CID('z8mWaJ1dZ9fH5EetPuRsj8jj26pXsgpsr').buffer
-          })
-          expect(result.remainderPath).to.equal('foo/hash/bar/mode')
-          done()
+      it('path out of scope', async () => {
+        const result = await resolver.resolve(commitBlob, 'tree/foo/hash/bar/mode')
+        expect(result.value).to.eql({
+          '/': new CID('z8mWaJ1dZ9fH5EetPuRsj8jj26pXsgpsr').buffer
         })
+        expect(result.remainderPath).to.equal('foo/hash/bar/mode')
       })
     })
   })
 
   describe('tag', () => {
-    it('resolver.tree', (done) => {
-      resolver.tree(tagBlob, (err, paths) => {
-        expect(err).to.not.exist()
-
-        expect(paths).to.eql([
-          'object',
-          'type',
-          'tag',
-          'message',
-          'tagger/original',
-          'tagger/name',
-          'tagger/email',
-          'tagger/date'
-        ])
-
-        done()
-      })
+    it('resolver.tree', async () => {
+      const paths = await resolver.tree(tagBlob)
+      expect(paths).to.eql([
+        'object',
+        'type',
+        'tag',
+        'message',
+        'tagger/original',
+        'tagger/name',
+        'tagger/email',
+        'tagger/date'
+      ])
     })
 
-    it('resolver.isLink with valid Link', (done) => {
-      resolver.isLink(tagBlob, 'object', (err, link) => {
-        expect(err).to.not.exist()
-        const linkCID = new CID(link['/'])
-        expect(CID.isCID(linkCID)).to.equal(true)
-        done()
-      })
+    it('resolver.isLink with valid Link', async () => {
+      const link = await resolver.isLink(tagBlob, 'object')
+      const linkCID = new CID(link['/'])
+      expect(CID.isCID(linkCID)).to.equal(true)
+    })
+  })
+
+  it('resolver.isLink with invalid Link', async () => {
+    const link = await resolver.isLink(tagBlob, '')
+    expect(link).to.equal(false)
+  })
+
+  describe('resolver.resolve', () => {
+    it('path within scope', async () => {
+      const result = await resolver.resolve(tagBlob, 'message')
+      expect(result.value).to.equal('A message\n')
     })
 
-    it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(tagBlob, '', (err, link) => {
-        expect(err).to.not.exist()
-        expect(link).to.equal(false)
-        done()
-      })
+    it('path within scope, but nested', async () => {
+      const result = await resolver.resolve(tagBlob, 'tagger/name')
+      expect(result.value).to.equal('John Doe')
     })
 
-    describe('resolver.resolve', () => {
-      it('path within scope', (done) => {
-        resolver.resolve(tagBlob, 'message', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.equal('A message\n')
-          done()
-        })
+    it('path out of scope', async () => {
+      const result = await resolver.resolve(tagBlob, 'object/tree/foo/mode')
+      expect(result.value).to.eql({
+        '/': new CID('z8mWaHQaEAKd5KMRNU3npB3saSZmhFh3e').buffer
       })
-
-      it('path within scope, but nested', (done) => {
-        resolver.resolve(tagBlob, 'tagger/name', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.equal('John Doe')
-          done()
-        })
-      })
-
-      it('path out of scope', (done) => {
-        resolver.resolve(tagBlob, 'object/tree/foo/mode', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql({
-            '/': new CID('z8mWaHQaEAKd5KMRNU3npB3saSZmhFh3e').buffer
-          })
-          expect(result.remainderPath).to.equal('tree/foo/mode')
-          done()
-        })
-      })
+      expect(result.remainderPath).to.equal('tree/foo/mode')
     })
   })
 
   describe('tree', () => {
-    it('resolver.tree', (done) => {
-      resolver.tree(treeBlob, (err, paths) => {
-        expect(err).to.not.exist()
-
-        expect(paths).to.eql([
-          'somedir',
-          'somedir/hash',
-          'somedir/mode',
-          'somefile',
-          'somefile/hash',
-          'somefile/mode'
-        ])
-
-        done()
-      })
+    it('resolver.tree', async () => {
+      const paths = await resolver.tree(treeBlob)
+      expect(paths).to.eql([
+        'somedir',
+        'somedir/hash',
+        'somedir/mode',
+        'somefile',
+        'somefile/hash',
+        'somefile/mode'
+      ])
     })
 
-    it('resolver.isLink with valid Link', (done) => {
-      resolver.isLink(treeBlob, 'somefile/hash', (err, link) => {
-        expect(err).to.not.exist()
-        const linkCID = new CID(link['/'])
-        expect(CID.isCID(linkCID)).to.equal(true)
-        done()
-      })
+    it('resolver.isLink with valid Link', async () => {
+      const link = await resolver.isLink(treeBlob, 'somefile/hash')
+      const linkCID = new CID(link['/'])
+      expect(CID.isCID(linkCID)).to.equal(true)
     })
 
-    it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(treeBlob, '', (err, link) => {
-        expect(err).to.not.exist()
-        expect(link).to.equal(false)
-        done()
-      })
+    it('resolver.isLink with invalid Link', async () => {
+      const link = await resolver.isLink(treeBlob, '')
+      expect(link).to.equal(false)
     })
 
     describe('resolver.resolve', () => {
-      it('path within scope, nested', (done) => {
-        resolver.resolve(treeBlob, 'somedir/mode', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.equal('40000')
-          done()
-        })
+      it('path within scope, nested', async () => {
+        const result = await resolver.resolve(treeBlob, 'somedir/mode')
+        expect(result.value).to.equal('40000')
       })
 
-      it('path out of scope', (done) => {
-        resolver.resolve(treeBlob, 'somedir/hash/subfile/mode', (err, result) => {
-          expect(err).to.not.exist()
-          expect(result.value).to.eql({
-            '/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer
-          })
-          expect(result.remainderPath).to.equal('subfile/mode')
-          done()
+      it('path out of scope', async () => {
+        const result = await resolver.resolve(treeBlob, 'somedir/hash/subfile/mode')
+        expect(result.value).to.eql({
+          '/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer
         })
+        expect(result.remainderPath).to.equal('subfile/mode')
       })
     })
   })
 
   describe('blob', () => {
-    it('resolver.tree', (done) => {
-      resolver.tree(blobBlob, (err, paths) => {
-        expect(err).to.not.exist()
-        expect(paths).to.eql([])
-        done()
-      })
+    it('resolver.tree', async () => {
+      const paths = await resolver.tree(blobBlob)
+      expect(paths).to.eql([])
     })
 
-    it('resolver.isLink with invalid Link', (done) => {
-      resolver.isLink(treeBlob, '', (err, link) => {
-        expect(err).to.not.exist()
-        expect(link).to.equal(false)
-        done()
-      })
+    it('resolver.isLink with invalid Link', async () => {
+      const link = await resolver.isLink(treeBlob, '')
+      expect(link).to.equal(false)
     })
   })
-})
 
-describe('IPLD format resolver API properties', () => {
-  it('should have `multicodec` defined correctly', (done) => {
-    expect(resolver.multicodec).to.equal('git-raw')
-    done()
-  })
+  describe('IPLD format resolver API properties', () => {
+    it('should have `multicodec` defined correctly', async () => {
+      expect(resolver.multicodec).to.equal('git-raw')
+    })
 
-  it('should have `defaultHashAlg` defined correctly', (done) => {
-    expect(resolver.defaultHashAlg).to.equal('sha1')
-    done()
+    it('should have `defaultHashAlg` defined correctly', async () => {
+      expect(resolver.defaultHashAlg).to.equal('sha1')
+    })
   })
 })

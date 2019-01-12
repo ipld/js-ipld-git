@@ -15,139 +15,116 @@ const personInfoPaths = [
   'date'
 ]
 
-exports.resolve = (binaryBlob, path, callback) => {
-  if (typeof path === 'function') {
-    callback = path
-    path = undefined
+exports.resolve = async (binaryBlob, path) => {
+  let node = await util.deserialize(binaryBlob)
+
+  if (!path || path === '/') {
+    return {
+      value: node,
+      remainderPath: ''
+    }
   }
 
-  util.deserialize(binaryBlob, (err, node) => {
-    if (err) {
-      return callback(err)
+  if (Buffer.isBuffer(node)) { // git blob
+    return {
+      value: node,
+      remainderPath: path
     }
+  }
 
-    if (!path || path === '/') {
-      return callback(null, {
-        value: node,
-        remainderPath: ''
-      })
+  const parts = path.split('/')
+  const val = traverse(node).get(parts)
+
+  if (val) {
+    return {
+      value: val,
+      remainderPath: ''
     }
+  }
 
-    if (Buffer.isBuffer(node)) { // git blob
-      return callback(null, {
-        value: node,
-        remainderPath: path
-      })
-    }
+  let value
+  let len = parts.length
 
-    const parts = path.split('/')
-    const val = traverse(node).get(parts)
+  for (let i = 0; i < len; i++) {
+    const partialPath = parts.shift()
 
-    if (val) {
-      return callback(null, {
-        value: val,
-        remainderPath: ''
-      })
-    }
-
-    let value
-    let len = parts.length
-
-    for (let i = 0; i < len; i++) {
-      const partialPath = parts.shift()
-
-      if (Array.isArray(node)) {
-        value = node[Number(partialPath)]
-      } if (node[partialPath]) {
-        value = node[partialPath]
+    if (Array.isArray(node)) {
+      value = node[Number(partialPath)]
+    } if (node[partialPath]) {
+      value = node[partialPath]
+    } else {
+      // can't traverse more
+      if (!value) {
+        throw new Error('path not available at root')
       } else {
-        // can't traverse more
-        if (!value) {
-          return callback(new Error('path not available at root'))
-        } else {
-          parts.unshift(partialPath)
-          return callback(null, {
-            value: value,
-            remainderPath: parts.join('/')
-          })
+        parts.unshift(partialPath)
+        return {
+          value: value,
+          remainderPath: parts.join('/')
         }
       }
-      node = value
     }
-  })
+    node = value
+  }
 }
 
-exports.tree = (binaryBlob, options, callback) => {
-  if (typeof options === 'function') {
-    callback = options
-    options = undefined
-  }
-
+exports.tree = async (binaryBlob, options) => {
   options = options || {}
 
-  util.deserialize(binaryBlob, (err, node) => {
-    if (err) {
-      return callback(err)
-    }
+  const node = await util.deserialize(binaryBlob)
 
-    if (Buffer.isBuffer(node)) { // git blob
-      return callback(null, [])
-    }
+  if (Buffer.isBuffer(node)) { // git blob
+    return []
+  }
 
-    let paths = []
-    switch (node.gitType) {
-      case 'commit':
-        paths = [
-          'message',
-          'tree'
-        ]
+  let paths = []
+  switch (node.gitType) {
+    case 'commit':
+      paths = [
+        'message',
+        'tree'
+      ]
 
-        paths = paths.concat(personInfoPaths.map((e) => 'author/' + e))
-        paths = paths.concat(personInfoPaths.map((e) => 'committer/' + e))
-        paths = paths.concat(node.parents.map((_, e) => 'parents/' + e))
+      paths = paths.concat(personInfoPaths.map((e) => 'author/' + e))
+      paths = paths.concat(personInfoPaths.map((e) => 'committer/' + e))
+      paths = paths.concat(node.parents.map((_, e) => 'parents/' + e))
 
-        if (node.encoding) {
-          paths.push('encoding')
-        }
-        break
-      case 'tag':
-        paths = [
-          'object',
-          'type',
-          'tag',
-          'message'
-        ]
+      if (node.encoding) {
+        paths.push('encoding')
+      }
+      break
+    case 'tag':
+      paths = [
+        'object',
+        'type',
+        'tag',
+        'message'
+      ]
 
-        if (node.tagger) {
-          paths = paths.concat(personInfoPaths.map((e) => 'tagger/' + e))
-        }
+      if (node.tagger) {
+        paths = paths.concat(personInfoPaths.map((e) => 'tagger/' + e))
+      }
 
-        break
-      default: // tree
-        Object.keys(node).forEach(dir => {
-          paths.push(dir)
-          paths.push(dir + '/hash')
-          paths.push(dir + '/mode')
-        })
-    }
-    callback(null, paths)
-  })
+      break
+    default: // tree
+      Object.keys(node).forEach(dir => {
+        paths.push(dir)
+        paths.push(dir + '/hash')
+        paths.push(dir + '/mode')
+      })
+  }
+  return paths
 }
 
-exports.isLink = (binaryBlob, path, callback) => {
-  exports.resolve(binaryBlob, path, (err, result) => {
-    if (err) {
-      return callback(err)
-    }
+exports.isLink = async (binaryBlob, path) => {
+  const result = await exports.resolve(binaryBlob, path)
+  if (result.remainderPath.length > 0) {
+    throw new Error('path out of scope')
+  }
 
-    if (result.remainderPath.length > 0) {
-      return callback(new Error('path out of scope'))
-    }
-
-    if (typeof result.value === 'object' && result.value['/']) {
-      callback(null, result.value)
-    } else {
-      callback(null, false)
-    }
-  })
+  if (typeof result.value === 'object' && result.value['/']) {
+    return result.value
+  } else {
+    return false
+  }
 }

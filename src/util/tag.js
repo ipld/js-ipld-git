@@ -1,12 +1,11 @@
 'use strict'
 
-const setImmediate = require('async/setImmediate')
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const gitUtil = require('./util')
 
 exports = module.exports
 
-exports.serialize = (dagNode, callback) => {
+exports.serialize = async (dagNode) => {
   let lines = []
   lines.push('object ' + gitUtil.cidToSha(dagNode.object['/']).toString('hex'))
   lines.push('type ' + dagNode.type)
@@ -24,10 +23,10 @@ exports.serialize = (dagNode, callback) => {
   outBuf.writeString(data.length.toString())
   outBuf.writeUInt8(0)
   outBuf.writeString(data)
-  setImmediate(() => callback(null, outBuf.toBuffer()))
+  return outBuf.toBuffer()
 }
 
-exports.deserialize = (data, callback) => {
+exports.deserialize = async (data) => {
   let lines = data.toString().split('\n')
   let res = { gitType: 'tag' }
 
@@ -35,7 +34,7 @@ exports.deserialize = (data, callback) => {
     let m = lines[line].match(/^([^ ]+) (.+)$/)
     if (m === null) {
       if (lines[line] !== '') {
-        setImmediate(() => callback(new Error('Invalid tag line ' + line)))
+        throw new Error('Invalid tag line ' + line)
       }
       res.message = lines.slice(line + 1).join('\n')
       break
@@ -60,6 +59,5 @@ exports.deserialize = (data, callback) => {
         res[key] = value
     }
   }
-
-  setImmediate(() => callback(null, res))
+  return res
 }

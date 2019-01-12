@@ -68,9 +68,10 @@ const zlib = require('zlib')
 
 // `gitObject` is a Buffer containing a git object
 inflatedObject = zlib.inflateSync(gitObject)
-IpldGit.util.deserialize(inflatedObject, (err, dagNode) => {
-  if (err) throw err
+IpldGit.util.deserialize(inflatedObject).then(dagNode => {
   console.log(dagNode)
+}, error => {
+  console.error(error)
 })
 
 ```

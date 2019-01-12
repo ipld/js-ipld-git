@@ -1,7 +1,5 @@
 'use strict'
 
-const setImmediate = require('async/setImmediate')
-const waterfall = require('async/waterfall')
 const multihashing = require('multihashing-async')
 const CID = require('cids')
 
@@ -14,66 +12,52 @@ const tree = require('./util/tree')
 
 exports = module.exports
 
-exports.serialize = (dagNode, callback) => {
+exports.serialize = async (dagNode) => {
   if (dagNode === null) {
-    setImmediate(() => callback(new Error('dagNode passed to serialize was null'), null))
-    return
+    throw new Error('dagNode passed to serialize was null')
   }
 
   if (Buffer.isBuffer(dagNode)) {
     if (dagNode.slice(0, 4).toString() === 'blob') {
-      setImmediate(() => callback(null, dagNode))
+      return dagNode
     } else {
-      setImmediate(() => callback(new Error('unexpected dagNode passed to serialize'), null))
+      throw new Error('unexpected dagNode passed to serialize')
     }
-    return
   }
 
   switch (dagNode.gitType) {
     case 'commit':
-      commit.serialize(dagNode, callback)
-      break
+      return commit.serialize(dagNode)
     case 'tag':
-      tag.serialize(dagNode, callback)
-      break
+      return tag.serialize(dagNode)
     default:
       // assume tree as a file named 'type' is legal
-      tree.serialize(dagNode, callback)
+      return tree.serialize(dagNode)
   }
 }
 
-exports.deserialize = (data, callback) => {
+exports.deserialize = async (data) => {
   let headLen = gitUtil.find(data, 0)
   let head = data.slice(0, headLen).toString()
   let typeLen = head.match(/([^ ]+) (\d+)/)
   if (!typeLen) {
-    setImmediate(() => callback(new Error('invalid object header'), null))
-    return
+    throw new Error('invalid object header')
   }
 
   switch (typeLen[1]) {
     case 'blob':
-      callback(null, data)
-      break
+      return data
     case 'commit':
-      commit.deserialize(data.slice(headLen + 1), callback)
-      break
+      return commit.deserialize(data.slice(headLen + 1))
     case 'tag':
-      tag.deserialize(data.slice(headLen + 1), callback)
-      break
+      return tag.deserialize(data.slice(headLen + 1))
     case 'tree':
-      tree.deserialize(data.slice(headLen + 1), callback)
-      break
+      return tree.deserialize(data.slice(headLen + 1))
     default:
-      setImmediate(() => callback(new Error('unknown object type ' + typeLen[1]), null))
+      throw new Error('unknown object type ' + typeLen[1])
   }
 }
 
-/**
- * @callback CidCallback
- * @param {?Error} error - Error if getting the CID failed
- * @param {?CID} cid - CID if call was successful
- */
 /**
  * Get the CID of the DAG-Node.
  *
@@ -81,20 +65,15 @@ exports.deserialize = (data, callback) => {
  * @param {Object} [options] - Options to create the CID
  * @param {number} [options.version=1] - CID version number
  * @param {string} [options.hashAlg='sha1'] - Hashing algorithm
- * @param {CidCallback} callback - Callback that handles the return value
- * @returns {void}
+ * @returns {Promise} that resolves the CID
  */
-exports.cid = (dagNode, options, callback) => {
-  if (typeof options === 'function') {
-    callback = options
-    options = {}
-  }
+exports.cid = async (dagNode, options) => {
   options = options || {}
   const hashAlg = options.hashAlg || resolver.defaultHashAlg
   const version = typeof options.version === 'undefined' ? 1 : options.version
-  waterfall([
-    (cb) => exports.serialize(dagNode, cb),
-    (serialized, cb) => multihashing(serialized, hashAlg, cb),
-    (mh, cb) => cb(null, new CID(version, resolver.multicodec, mh))
-  ], callback)
+  const serialized = await exports.serialize(dagNode)
+  const mh = await new Promise((resolve, reject) => {
+    multihashing(serialized, hashAlg, (err, data) => err ? reject(err) : resolve(data))
+  })
+  return new CID(version, resolver.multicodec, mh)
 }

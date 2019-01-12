@@ -23,46 +23,38 @@ describe('IPLD format util', () => {
     message: 'A message\n'
   }
 
-  it('.serialize and .deserialize', (done) => {
-    ipldGit.util.serialize(tagNode, (err, serialized) => {
-      expect(err).to.not.exist()
-      expect(Buffer.isBuffer(serialized)).to.equal(true)
-      ipldGit.util.deserialize(serialized, (err, deserialized) => {
-        expect(err).to.not.exist()
-        expect(tagNode).to.eql(deserialized)
-        done()
-      })
-    })
+  it('.serialize and .deserialize', async () => {
+    const serialized = await ipldGit.util.serialize(tagNode)
+    expect(Buffer.isBuffer(serialized)).to.equal(true)
+    const deserialized = await ipldGit.util.deserialize(serialized)
+    expect(tagNode).to.eql(deserialized)
   })
 
-  it('.cid', (done) => {
-    ipldGit.util.cid(tagNode, (err, cid) => {
-      expect(err).to.not.exist()
-      expect(cid.version).to.equal(1)
-      expect(cid.codec).to.equal('git-raw')
-      expect(cid.multihash).to.exist()
-      const mh = multihash.decode(cid.multihash)
-      expect(mh.name).to.equal('sha1')
-      done()
-    })
+  it('.cid', async () => {
+    const cid = await ipldGit.util.cid(tagNode)
+    expect(cid.version).to.equal(1)
+    expect(cid.codec).to.equal('git-raw')
+    expect(cid.multihash).to.exist()
+    const mh = multihash.decode(cid.multihash)
+    expect(mh.name).to.equal('sha1')
   })
 
-  it('.cid with options', (done) => {
-    ipldGit.util.cid(tagNode, { hashAlg: 'sha3-512' }, (err, cid) => {
-      expect(err).to.not.exist()
-      expect(cid.version).to.equal(1)
-      expect(cid.codec).to.equal('git-raw')
-      expect(cid.multihash).to.exist()
-      const mh = multihash.decode(cid.multihash)
-      expect(mh.name).to.equal('sha3-512')
-      done()
-    })
+  it('.cid with options', async () => {
+    const cid = await ipldGit.util.cid(tagNode, { hashAlg: 'sha3-512' })
+    expect(cid.version).to.equal(1)
+    expect(cid.codec).to.equal('git-raw')
+    expect(cid.multihash).to.exist()
+    const mh = multihash.decode(cid.multihash)
+    expect(mh.name).to.equal('sha3-512')
   })
 
-  it('.cid errors unknown hashAlg', (done) => {
-    ipldGit.util.cid(tagNode, { hashAlg: 'unknown' }, (err, cid) => {
+  it('.cid errors unknown hashAlg', async () => {
+    try {
+      await ipldGit.util.cid(tagNode, { hashAlg: 'unknown' })
+    } catch (err) {
       expect(err).to.exist()
-      done()
-    })
+      return
+    }
+    throw new Error('Error did not exist')
   })
 })
