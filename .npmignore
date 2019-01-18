@@ -1,3 +1,5 @@
+# This is a copy of `.gitignore` without ignoring `dist`, please keep it in sync
+
 yarn.lock
 docs
 **/node_modules/
