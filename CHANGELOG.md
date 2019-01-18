@@ -1,3 +1,14 @@
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/ipld/js-ipld-git/compare/v0.2.2...v0.2.3) (2019-01-18)
+
+
+### Bug Fixes
+
+* **package:** update multicodec to version 0.4.0 ([c370777](https://github.com/ipld/js-ipld-git/commit/c370777)), closes [#34](https://github.com/ipld/js-ipld-git/issues/34)
+* browser bundle ([#39](https://github.com/ipld/js-ipld-git/issues/39)) ([d7d078f](https://github.com/ipld/js-ipld-git/commit/d7d078f))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/ipld/js-ipld-git/compare/v0.2.1...v0.2.2) (2018-10-12)
 
