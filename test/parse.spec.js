@@ -76,7 +76,8 @@ describe('utils', () => {
 describe('git object parsing', () => {
   let objects
 
-  before((done) => {
+  before(function (done) {
+    this.timeout(5000)
     objects = testObjectsJSON.map(o => [o, zlib.inflateSync(loadFixture('test/fixtures/' + o))])
     done()
   })
