@@ -42,7 +42,8 @@
     "multihashes": "~0.4.12",
     "multihashing-async": "~0.5.1",
     "smart-buffer": "^4.0.0",
-    "traverse": "~0.6.6"
+    "traverse": "~0.6.6",
+    "strftime": "~0.10.0"
   },
   "devDependencies": {
     "aegir": "^18.0.2",

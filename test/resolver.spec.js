@@ -30,12 +30,12 @@ describe('IPLD format resolver (local)', () => {
       author: {
         name: 'John Doe',
         email: 'johndoe@example.com',
-        date: '1497302532 +0200'
+        date: '2017-06-12T23:22:12+02:00'
       },
       committer: {
         name: 'John Doe',
         email: 'johndoe@example.com',
-        date: '1497302532 +0200'
+        date: '2017-06-12T23:22:12+02:00'
       },
       encoding: 'ISO-8859-1',
       message: 'Encoded\n'
@@ -49,7 +49,7 @@ describe('IPLD format resolver (local)', () => {
       tagger: {
         name: 'John Doe',
         email: 'johndoe@example.com',
-        date: '1497302532 +0200'
+        date: '2017-06-12T23:22:12+02:00'
       },
       message: 'A message\n'
     }

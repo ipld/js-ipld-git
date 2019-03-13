@@ -18,7 +18,7 @@ describe('IPLD format util', () => {
     tagger: {
       name: 'John Doe',
       email: 'johndoe@example.com',
-      date: '1497302532 +0200'
+      date: '2017-06-12T23:22:12+02:00'
     },
     message: 'A message\n'
   }
@@ -29,7 +29,7 @@ describe('IPLD format util', () => {
       expect(Buffer.isBuffer(serialized)).to.equal(true)
       ipldGit.util.deserialize(serialized, (err, deserialized) => {
         expect(err).to.not.exist()
-        expect(tagNode).to.eql(deserialized)
+        expect(deserialized).to.eql(tagNode)
         done()
       })
     })

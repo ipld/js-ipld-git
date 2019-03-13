@@ -22,7 +22,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.equal('Someone')
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456 +0123')
+      expect(info.date).to.equal('1970-01-02T11:40:36+01:23')
       done()
     })
 
@@ -31,7 +31,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.equal('So Me One')
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456 +0123')
+      expect(info.date).to.equal('1970-01-02T11:40:36+01:23')
       done()
     })
 
@@ -40,7 +40,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.not.exist()
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456 +0123')
+      expect(info.date).to.equal('1970-01-02T11:40:36+01:23')
       done()
     })
 
@@ -49,7 +49,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.not.exist()
       expect(info.email).to.equal('some@one.somewhere')
-      expect(info.date).to.equal('123456 +0123')
+      expect(info.date).to.equal('1970-01-02T11:40:36+01:23')
       done()
     })
 
@@ -58,7 +58,7 @@ describe('utils', () => {
       expect(info).to.exist()
       expect(info.name).to.equal('Some One & Other One')
       expect(info.email).to.equal('some@one.somewhere, other@one.elsewhere')
-      expect(info.date).to.equal('987654 +4321')
+      expect(info.date).to.equal('1970-01-14T05:41:54+43:21')
       done()
     })
 
