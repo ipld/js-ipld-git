@@ -11,7 +11,11 @@ exports.serialize = (dagNode, callback) => {
   Object.keys(dagNode).forEach((name) => {
     entries.push([name, dagNode[name]])
   })
-  entries.sort((a, b) => a[0] > b[0] ? 1 : -1)
+  entries.sort((a, b) => {
+    const aName = a[0] + (a[1].mode === '40000' ? '/' : '')
+    const bName = b[0] + (b[1].mode === '40000' ? '/' : '')
+    return aName > bName ? 1 : -1
+  })
   let buf = new SmartBuffer()
   entries.forEach((entry) => {
     buf.writeStringNT(entry[1].mode + ' ' + entry[0])
