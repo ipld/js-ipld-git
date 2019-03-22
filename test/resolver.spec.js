@@ -64,6 +64,14 @@ describe('IPLD format resolver (local)', () => {
         mode: '40000'
       }
     }
+    treeNode['somedir.notactuallyadir'] = {
+      hash: { '/': new CID('z8mWaJNVTadD7oum3m7f1dmarHvYhFV5b').buffer },
+      mode: '100644'
+    }
+    treeNode['somefile.notactuallyafile'] = {
+      hash: { '/': new CID('z8mWaFY1zpiZSXTBrz8i6A3o9vNvAs2CH').buffer },
+      mode: '40000'
+    }
 
     const blobNode = Buffer.from('626c6f62203800736f6d6564617461', 'hex') // blob 8\0somedata
 
@@ -228,12 +236,18 @@ describe('IPLD format resolver (local)', () => {
         expect(err).to.not.exist()
 
         expect(paths).to.eql([
+          'somedir.notactuallyadir',
+          'somedir.notactuallyadir/hash',
+          'somedir.notactuallyadir/mode',
           'somedir',
           'somedir/hash',
           'somedir/mode',
           'somefile',
           'somefile/hash',
-          'somefile/mode'
+          'somefile/mode',
+          'somefile.notactuallyafile',
+          'somefile.notactuallyafile/hash',
+          'somefile.notactuallyafile/mode'
         ])
 
         done()
