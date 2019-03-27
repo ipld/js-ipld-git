@@ -1,6 +1,6 @@
 {
   "name": "ipld-git",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "JavaScript Implementation of Git IPLD format",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -57,6 +57,8 @@
     "David Dias <daviddias.p@gmail.com>",
     "Jonah Weissman <jonahrweissman@gmail.com>",
     "Richard Schneider <makaretu@gmail.com>",
+    "Sameer Puri <sameer@users.noreply.github.com>",
+    "Sameer Puri <11097096+sameer@users.noreply.github.com>",
     "Victor Bjelkholm <victorbjelkholm@gmail.com>",
     "Volker Mische <volker.mische@gmail.com>",
     "greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>",
