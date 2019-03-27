@@ -1,3 +1,23 @@
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/ipld/js-ipld-git/compare/v0.2.3...v0.3.0) (2019-03-27)
+
+
+### Bug Fixes
+
+* order tree directory entries correctly (fixes [#44](https://github.com/ipld/js-ipld-git/issues/44)) ([02be41f](https://github.com/ipld/js-ipld-git/commit/02be41f))
+
+
+### Features
+
+* use RFC3339 to format dates, fixes ipfs/go-ipld-git[#16](https://github.com/ipld/js-ipld-git/issues/16) ([#43](https://github.com/ipld/js-ipld-git/issues/43)) ([8a9f7cb](https://github.com/ipld/js-ipld-git/commit/8a9f7cb))
+
+
+### BREAKING CHANGES
+
+* Dates are now returned in ISO 8601/RFC3399 format 
+
+
+
 <a name="0.2.3"></a>
 ## [0.2.3](https://github.com/ipld/js-ipld-git/compare/v0.2.2...v0.2.3) (2019-01-18)
 
