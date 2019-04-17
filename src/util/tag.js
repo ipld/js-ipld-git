@@ -1,14 +1,13 @@
 'use strict'
 
-const setImmediate = require('async/setImmediate')
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const gitUtil = require('./util')
 
 exports = module.exports
 
-exports.serialize = (dagNode, callback) => {
+exports.serialize = (dagNode) => {
   let lines = []
-  lines.push('object ' + gitUtil.cidToSha(dagNode.object['/']).toString('hex'))
+  lines.push('object ' + gitUtil.cidToSha(dagNode.object).toString('hex'))
   lines.push('type ' + dagNode.type)
   lines.push('tag ' + dagNode.tag)
   if (dagNode.tagger !== null) {
@@ -24,10 +23,10 @@ exports.serialize = (dagNode, callback) => {
   outBuf.writeString(data.length.toString())
   outBuf.writeUInt8(0)
   outBuf.writeString(data)
-  setImmediate(() => callback(null, outBuf.toBuffer()))
+  return outBuf.toBuffer()
 }
 
-exports.deserialize = (data, callback) => {
+exports.deserialize = (data) => {
   let lines = data.toString().split('\n')
   let res = { gitType: 'tag' }
 
@@ -35,7 +34,7 @@ exports.deserialize = (data, callback) => {
     let m = lines[line].match(/^([^ ]+) (.+)$/)
     if (m === null) {
       if (lines[line] !== '') {
-        setImmediate(() => callback(new Error('Invalid tag line ' + line)))
+        throw new Error('Invalid tag line ' + line)
       }
       res.message = lines.slice(line + 1).join('\n')
       break
@@ -45,7 +44,7 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'object':
-        res.object = { '/': gitUtil.shaToCid(Buffer.from(value, 'hex')) }
+        res.object = gitUtil.shaToCid(Buffer.from(value, 'hex'))
         break
       case 'tagger':
         res.tagger = gitUtil.parsePersonLine(value)
@@ -61,5 +60,7 @@ exports.deserialize = (data, callback) => {
     }
   }
 
-  setImmediate(() => callback(null, res))
+  Object.defineProperty(res, 'gitType', { enumerable: false })
+
+  return res
 }
