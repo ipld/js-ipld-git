@@ -1,8 +1,6 @@
 'use strict'
 
-const SmartBuffer = require('smart-buffer').SmartBuffer
 const multihashes = require('multihashes/src/constants')
-const multicodecs = require('multicodec/src/base-table')
 const multihash = require('multihashes')
 const CID = require('cids')
 const strftime = require('strftime')
@@ -58,17 +56,12 @@ exports.serializePersonLine = (node) => {
 }
 
 exports.shaToCid = (buf) => {
-  let mhashBuf = new SmartBuffer()
-  mhashBuf.writeUInt8(1)
-  mhashBuf.writeBuffer(multicodecs['git-raw'])
-  mhashBuf.writeUInt8(multihashes.names.sha1)
-  mhashBuf.writeUInt8(exports.SHA1_LENGTH)
-  mhashBuf.writeBuffer(buf)
-  return mhashBuf.toBuffer()
+  const mh = multihash.encode(buf, 'sha1')
+  return new CID(1, 'git-raw', mh)
 }
 
-exports.cidToSha = (cidBuf) => {
-  let mh = multihash.decode(new CID(cidBuf).multihash)
+exports.cidToSha = (cid) => {
+  let mh = multihash.decode(cid.multihash)
   if (mh.name !== 'sha1') {
     return null
   }

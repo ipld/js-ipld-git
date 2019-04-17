@@ -1,16 +1,15 @@
 'use strict'
 
-const setImmediate = require('async/setImmediate')
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const gitUtil = require('./util')
 
 exports = module.exports
 
-exports.serialize = (dagNode, callback) => {
+exports.serialize = (dagNode) => {
   let lines = []
-  lines.push('tree ' + gitUtil.cidToSha(dagNode.tree['/']).toString('hex'))
+  lines.push('tree ' + gitUtil.cidToSha(dagNode.tree).toString('hex'))
   dagNode.parents.forEach((parent) => {
-    lines.push('parent ' + gitUtil.cidToSha(parent['/']).toString('hex'))
+    lines.push('parent ' + gitUtil.cidToSha(parent).toString('hex'))
   })
   lines.push('author ' + gitUtil.serializePersonLine(dagNode.author))
   lines.push('committer ' + gitUtil.serializePersonLine(dagNode.committer))
@@ -19,7 +18,7 @@ exports.serialize = (dagNode, callback) => {
   }
   if (dagNode.mergetag) {
     dagNode.mergetag.forEach(tag => {
-      lines.push('mergetag object ' + gitUtil.cidToSha(tag.object['/']).toString('hex'))
+      lines.push('mergetag object ' + gitUtil.cidToSha(tag.object).toString('hex'))
       lines.push(tag.text)
     })
   }
@@ -37,10 +36,10 @@ exports.serialize = (dagNode, callback) => {
   outBuf.writeString(data.length.toString())
   outBuf.writeUInt8(0)
   outBuf.writeString(data)
-  setImmediate(() => callback(null, outBuf.toBuffer()))
+  return outBuf.toBuffer()
 }
 
-exports.deserialize = (data, callback) => {
+exports.deserialize = (data) => {
   let lines = data.toString().split('\n')
   let res = { gitType: 'commit', parents: [] }
 
@@ -48,7 +47,7 @@ exports.deserialize = (data, callback) => {
     let m = lines[line].match(/^([^ ]+) (.+)$/)
     if (!m) {
       if (lines[line] !== '') {
-        setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+        throw new Error('Invalid commit line ' + line)
       }
       res.message = lines.slice(line + 1).join('\n')
       break
@@ -58,7 +57,7 @@ exports.deserialize = (data, callback) => {
     let value = m[2]
     switch (key) {
       case 'tree':
-        res.tree = { '/': gitUtil.shaToCid(Buffer.from(value, 'hex')) }
+        res.tree = gitUtil.shaToCid(Buffer.from(value, 'hex'))
         break
       case 'committer':
         res.committer = gitUtil.parsePersonLine(value)
@@ -67,11 +66,11 @@ exports.deserialize = (data, callback) => {
         res.author = gitUtil.parsePersonLine(value)
         break
       case 'parent':
-        res.parents.push({ '/': gitUtil.shaToCid(Buffer.from(value, 'hex')) })
+        res.parents.push(gitUtil.shaToCid(Buffer.from(value, 'hex')))
         break
       case 'gpgsig': {
         if (value !== '-----BEGIN PGP SIGNATURE-----') {
-          setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+          throw new Error('Invalid commit line ' + line)
         }
         res.signature = {}
 
@@ -87,12 +86,10 @@ exports.deserialize = (data, callback) => {
       case 'mergetag': {
         let mt = value.match(/^object ([0-9a-f]{40})$/)
         if (!mt) {
-          setImmediate(() => callback(new Error('Invalid commit line ' + line)))
+          throw new Error('Invalid commit line ' + line)
         }
 
-        let tag = { object:
-          { '/': gitUtil.shaToCid(Buffer.from(mt[1], 'hex')) }
-        }
+        let tag = { object: gitUtil.shaToCid(Buffer.from(mt[1], 'hex')) }
 
         let startLine = line
         for (; line < lines.length - 1; line++) {
@@ -115,5 +112,7 @@ exports.deserialize = (data, callback) => {
     }
   }
 
-  setImmediate(() => callback(null, res))
+  Object.defineProperty(res, 'gitType', { enumerable: false })
+
+  return res
 }

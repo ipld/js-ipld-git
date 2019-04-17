@@ -1,153 +1,70 @@
 'use strict'
 
+const CID = require('cids')
+
 const util = require('./util')
-const traverse = require('traverse')
 
-exports = module.exports
+/**
+ * Resolves a path within a Git block.
+ *
+ * Returns the value or a link and the partial mising path. This way the
+ * IPLD Resolver can fetch the link and continue to resolve.
+ *
+ * @param {Buffer} binaryBlob - Binary representation of a Git block
+ * @param {string} [path='/'] - Path that should be resolved
+ * @returns {Object} result - Result of the path it it was resolved successfully
+ * @returns {*} result.value - Value the path resolves to
+ * @returns {string} result.remainderPath - If the path resolves half-way to a
+ *   link, then the `remainderPath` is the part after the link that can be used
+ *   for further resolving
+ */
+exports.resolve = (binaryBlob, path) => {
+  let node = util.deserialize(binaryBlob)
 
-exports.multicodec = 'git-raw'
-exports.defaultHashAlg = 'sha1'
-
-const personInfoPaths = [
-  'original',
-  'name',
-  'email',
-  'date'
-]
-
-exports.resolve = (binaryBlob, path, callback) => {
-  if (typeof path === 'function') {
-    callback = path
-    path = undefined
-  }
-
-  util.deserialize(binaryBlob, (err, node) => {
-    if (err) {
-      return callback(err)
+  const parts = path.split('/').filter(Boolean)
+  while (parts.length) {
+    const key = parts.shift()
+    if (node[key] === undefined) {
+      throw new Error(`Object has no property '${key}'`)
     }
 
-    if (!path || path === '/') {
-      return callback(null, {
+    node = node[key]
+    if (CID.isCID(node)) {
+      return {
         value: node,
-        remainderPath: ''
-      })
-    }
-
-    if (Buffer.isBuffer(node)) { // git blob
-      return callback(null, {
-        value: node,
-        remainderPath: path
-      })
-    }
-
-    const parts = path.split('/')
-    const val = traverse(node).get(parts)
-
-    if (val) {
-      return callback(null, {
-        value: val,
-        remainderPath: ''
-      })
-    }
-
-    let value
-    let len = parts.length
-
-    for (let i = 0; i < len; i++) {
-      const partialPath = parts.shift()
-
-      if (Array.isArray(node)) {
-        value = node[Number(partialPath)]
-      } if (node[partialPath]) {
-        value = node[partialPath]
-      } else {
-        // can't traverse more
-        if (!value) {
-          return callback(new Error('path not available at root'))
-        } else {
-          parts.unshift(partialPath)
-          return callback(null, {
-            value: value,
-            remainderPath: parts.join('/')
-          })
-        }
+        remainderPath: parts.join('/')
       }
-      node = value
     }
-  })
-}
-
-exports.tree = (binaryBlob, options, callback) => {
-  if (typeof options === 'function') {
-    callback = options
-    options = undefined
   }
 
-  options = options || {}
-
-  util.deserialize(binaryBlob, (err, node) => {
-    if (err) {
-      return callback(err)
-    }
-
-    if (Buffer.isBuffer(node)) { // git blob
-      return callback(null, [])
-    }
-
-    let paths = []
-    switch (node.gitType) {
-      case 'commit':
-        paths = [
-          'message',
-          'tree'
-        ]
-
-        paths = paths.concat(personInfoPaths.map((e) => 'author/' + e))
-        paths = paths.concat(personInfoPaths.map((e) => 'committer/' + e))
-        paths = paths.concat(node.parents.map((_, e) => 'parents/' + e))
-
-        if (node.encoding) {
-          paths.push('encoding')
-        }
-        break
-      case 'tag':
-        paths = [
-          'object',
-          'type',
-          'tag',
-          'message'
-        ]
-
-        if (node.tagger) {
-          paths = paths.concat(personInfoPaths.map((e) => 'tagger/' + e))
-        }
-
-        break
-      default: // tree
-        Object.keys(node).forEach(dir => {
-          paths.push(dir)
-          paths.push(dir + '/hash')
-          paths.push(dir + '/mode')
-        })
-    }
-    callback(null, paths)
-  })
+  return {
+    value: node,
+    remainderPath: ''
+  }
 }
 
-exports.isLink = (binaryBlob, path, callback) => {
-  exports.resolve(binaryBlob, path, (err, result) => {
-    if (err) {
-      return callback(err)
-    }
+const traverse = function * (node, path) {
+  // Traverse only objects and arrays
+  if (Buffer.isBuffer(node) || CID.isCID(node) || typeof node === 'string' ||
+      node === null) {
+    return
+  }
+  for (const item of Object.keys(node)) {
+    const nextpath = path === undefined ? item : path + '/' + item
+    yield nextpath
+    yield * traverse(node[item], nextpath)
+  }
+}
 
-    if (result.remainderPath.length > 0) {
-      return callback(new Error('path out of scope'))
-    }
+/**
+ * Return all available paths of a block.
+ *
+ * @generator
+ * @param {Buffer} binaryBlob - Binary representation of a Bitcoin block
+ * @yields {string} - A single path
+ */
+exports.tree = function * (binaryBlob) {
+  const node = util.deserialize(binaryBlob)
 
-    if (typeof result.value === 'object' && result.value['/']) {
-      callback(null, result.value)
-    } else {
-      callback(null, false)
-    }
-  })
+  yield * traverse(node)
 }

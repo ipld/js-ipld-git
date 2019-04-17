@@ -1,12 +1,11 @@
 'use strict'
 
-const setImmediate = require('async/setImmediate')
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const gitUtil = require('./util')
 
 exports = module.exports
 
-exports.serialize = (dagNode, callback) => {
+exports.serialize = (dagNode) => {
   let entries = []
   Object.keys(dagNode).forEach((name) => {
     entries.push([name, dagNode[name]])
@@ -19,7 +18,7 @@ exports.serialize = (dagNode, callback) => {
   let buf = new SmartBuffer()
   entries.forEach((entry) => {
     buf.writeStringNT(entry[1].mode + ' ' + entry[0])
-    buf.writeBuffer(gitUtil.cidToSha(entry[1].hash['/']))
+    buf.writeBuffer(gitUtil.cidToSha(entry[1].hash))
   })
 
   let outBuf = new SmartBuffer()
@@ -27,10 +26,10 @@ exports.serialize = (dagNode, callback) => {
   outBuf.writeString(buf.length.toString())
   outBuf.writeUInt8(0)
   outBuf.writeBuffer(buf.toBuffer())
-  setImmediate(() => callback(null, outBuf.toBuffer()))
+  return outBuf.toBuffer()
 }
 
-exports.deserialize = (data, callback) => {
+exports.deserialize = (data) => {
   let res = {}
   let buf = SmartBuffer.fromBuffer(data, 'utf8')
 
@@ -43,18 +42,18 @@ exports.deserialize = (data, callback) => {
     let hash = buf.readBuffer(gitUtil.SHA1_LENGTH)
     let modNameMatched = modeName.match(/^(\d+) (.+)$/)
     if (!modNameMatched) {
-      setImmediate(() => callback(new Error('invalid file mode/name')))
+      throw new Error('invalid file mode/name')
     }
 
     if (res[modNameMatched[2]]) {
-      setImmediate(() => callback(new Error('duplicate file in tree')))
+      throw new Error('duplicate file in tree')
     }
 
     res[modNameMatched[2]] = {
       mode: modNameMatched[1],
-      hash: { '/': gitUtil.shaToCid(hash) }
+      hash: gitUtil.shaToCid(hash)
     }
   }
 
-  setImmediate(() => callback(null, res))
+  return res
 }
