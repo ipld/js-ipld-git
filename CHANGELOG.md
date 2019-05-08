@@ -1,3 +1,31 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/ipld/js-ipld-git/compare/v0.3.0...v0.4.0) (2019-05-08)
+
+
+### Bug Fixes
+
+* **package:** update cids to version 0.6.0 ([fe0ac8b](https://github.com/ipld/js-ipld-git/commit/fe0ac8b))
+* **package:** update multihashing-async to version 0.6.0 ([784c464](https://github.com/ipld/js-ipld-git/commit/784c464))
+
+
+### Features
+
+* new IPLD Format API ([e39a7d9](https://github.com/ipld/js-ipld-git/commit/e39a7d9))
+
+
+### BREAKING CHANGES
+
+* The API is now async/await based
+
+There are numerous changes, the most significant one is that the API
+is no longer callback based, but it using async/await.
+
+For the full new API please see the [IPLD Formats spec].
+
+[IPLD Formats spec]: https://github.com/ipld/interface-ipld-format
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/ipld/js-ipld-git/compare/v0.2.3...v0.3.0) (2019-03-27)
 
