@@ -17,7 +17,7 @@ const testObjectsJSON = require('./fixtures/objects.json')
 describe('utils', () => {
   describe('person line parsing', () => {
     it('parses generic line', (done) => {
-      let info = util.parsePersonLine('Someone <some@one.somewhere> 123456 +0123')
+      const info = util.parsePersonLine('Someone <some@one.somewhere> 123456 +0123')
       expect(info).to.exist()
       expect(info.name).to.equal('Someone')
       expect(info.email).to.equal('some@one.somewhere')
@@ -26,7 +26,7 @@ describe('utils', () => {
     })
 
     it('parses 3 segment name', (done) => {
-      let info = util.parsePersonLine('So Me One <some@one.somewhere> 123456 +0123')
+      const info = util.parsePersonLine('So Me One <some@one.somewhere> 123456 +0123')
       expect(info).to.exist()
       expect(info.name).to.equal('So Me One')
       expect(info.email).to.equal('some@one.somewhere')
@@ -35,7 +35,7 @@ describe('utils', () => {
     })
 
     it('parses no name line', (done) => {
-      let info = util.parsePersonLine('<some@one.somewhere> 123456 +0123')
+      const info = util.parsePersonLine('<some@one.somewhere> 123456 +0123')
       expect(info).to.exist()
       expect(info.name).to.not.exist()
       expect(info.email).to.equal('some@one.somewhere')
@@ -44,7 +44,7 @@ describe('utils', () => {
     })
 
     it('parses no name line with space in front', (done) => {
-      let info = util.parsePersonLine(' <some@one.somewhere> 123456 +0123')
+      const info = util.parsePersonLine(' <some@one.somewhere> 123456 +0123')
       expect(info).to.exist()
       expect(info.name).to.not.exist()
       expect(info.email).to.equal('some@one.somewhere')
@@ -53,7 +53,7 @@ describe('utils', () => {
     })
 
     it('parses line with nonstandard info', (done) => {
-      let info = util.parsePersonLine('Some One & Other One <some@one.somewhere, other@one.elsewhere> 987654 +4321')
+      const info = util.parsePersonLine('Some One & Other One <some@one.somewhere, other@one.elsewhere> 987654 +4321')
       expect(info).to.exist()
       expect(info.name).to.equal('Some One & Other One')
       expect(info.email).to.equal('some@one.somewhere, other@one.elsewhere')
@@ -62,7 +62,7 @@ describe('utils', () => {
     })
 
     it('parses line without date info', (done) => {
-      let info = util.parsePersonLine('Someone <some.one@some.where>')
+      const info = util.parsePersonLine('Someone <some.one@some.where>')
       expect(info).to.exist()
       expect(info.name).to.equal('Someone')
       expect(info.email).to.equal('some.one@some.where')

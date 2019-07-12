@@ -30,7 +30,7 @@ const isoStrictToTimestampWithOffset = (isoString) => {
 }
 
 exports.parsePersonLine = (line) => {
-  let matched = line.match(/^(([^<]+)\s)?\s?<([^>]+)>\s?(?:(\d+)\s([+-]\d+))?$/)
+  const matched = line.match(/^(([^<]+)\s)?\s?<([^>]+)>\s?(?:(\d+)\s([+-]\d+))?$/)
   if (matched === null) {
     return null
   }
@@ -43,7 +43,7 @@ exports.parsePersonLine = (line) => {
 }
 
 exports.serializePersonLine = (node) => {
-  let parts = []
+  const parts = []
   if (node.name) {
     parts.push(node.name)
   }
@@ -61,7 +61,7 @@ exports.shaToCid = (buf) => {
 }
 
 exports.cidToSha = (cid) => {
-  let mh = multihash.decode(cid.multihash)
+  const mh = multihash.decode(cid.multihash)
   if (mh.name !== 'sha1') {
     return null
   }

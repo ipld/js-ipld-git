@@ -6,7 +6,7 @@ const gitUtil = require('./util')
 exports = module.exports
 
 exports.serialize = (dagNode) => {
-  let lines = []
+  const lines = []
   lines.push('tree ' + gitUtil.cidToSha(dagNode.tree).toString('hex'))
   dagNode.parents.forEach((parent) => {
     lines.push('parent ' + gitUtil.cidToSha(parent).toString('hex'))
@@ -29,9 +29,9 @@ exports.serialize = (dagNode) => {
   lines.push('')
   lines.push(dagNode.message)
 
-  let data = lines.join('\n')
+  const data = lines.join('\n')
 
-  let outBuf = new SmartBuffer()
+  const outBuf = new SmartBuffer()
   outBuf.writeString('commit ')
   outBuf.writeString(data.length.toString())
   outBuf.writeUInt8(0)
@@ -40,11 +40,11 @@ exports.serialize = (dagNode) => {
 }
 
 exports.deserialize = (data) => {
-  let lines = data.toString().split('\n')
-  let res = { gitType: 'commit', parents: [] }
+  const lines = data.toString().split('\n')
+  const res = { gitType: 'commit', parents: [] }
 
   for (let line = 0; line < lines.length; line++) {
-    let m = lines[line].match(/^([^ ]+) (.+)$/)
+    const m = lines[line].match(/^([^ ]+) (.+)$/)
     if (!m) {
       if (lines[line] !== '') {
         throw new Error('Invalid commit line ' + line)
@@ -53,8 +53,8 @@ exports.deserialize = (data) => {
       break
     }
 
-    let key = m[1]
-    let value = m[2]
+    const key = m[1]
+    const value = m[2]
     switch (key) {
       case 'tree':
         res.tree = gitUtil.shaToCid(Buffer.from(value, 'hex'))
@@ -74,7 +74,7 @@ exports.deserialize = (data) => {
         }
         res.signature = {}
 
-        let startLine = line
+        const startLine = line
         for (; line < lines.length - 1; line++) {
           if (lines[line + 1][0] !== ' ') {
             res.signature.text = lines.slice(startLine + 1, line + 1).join('\n')
@@ -84,14 +84,14 @@ exports.deserialize = (data) => {
         break
       }
       case 'mergetag': {
-        let mt = value.match(/^object ([0-9a-f]{40})$/)
+        const mt = value.match(/^object ([0-9a-f]{40})$/)
         if (!mt) {
           throw new Error('Invalid commit line ' + line)
         }
 
-        let tag = { object: gitUtil.shaToCid(Buffer.from(mt[1], 'hex')) }
+        const tag = { object: gitUtil.shaToCid(Buffer.from(mt[1], 'hex')) }
 
-        let startLine = line
+        const startLine = line
         for (; line < lines.length - 1; line++) {
           if (lines[line + 1][0] !== ' ') {
             tag.text = lines.slice(startLine + 1, line + 1).join('\n')

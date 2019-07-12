@@ -52,9 +52,9 @@ exports.serialize = (dagNode) => {
  * @returns {BitcoinBlock}
  */
 exports.deserialize = (data) => {
-  let headLen = gitUtil.find(data, 0)
-  let head = data.slice(0, headLen).toString()
-  let typeLen = head.match(/([^ ]+) (\d+)/)
+  const headLen = gitUtil.find(data, 0)
+  const head = data.slice(0, headLen).toString()
+  const typeLen = head.match(/([^ ]+) (\d+)/)
   if (!typeLen) {
     throw new Error('invalid object header')
   }
