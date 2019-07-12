@@ -6,7 +6,7 @@ const gitUtil = require('./util')
 exports = module.exports
 
 exports.serialize = (dagNode) => {
-  let entries = []
+  const entries = []
   Object.keys(dagNode).forEach((name) => {
     entries.push([name, dagNode[name]])
   })
@@ -15,13 +15,13 @@ exports.serialize = (dagNode) => {
     const bName = b[0] + (b[1].mode === '40000' ? '/' : '')
     return aName > bName ? 1 : -1
   })
-  let buf = new SmartBuffer()
+  const buf = new SmartBuffer()
   entries.forEach((entry) => {
     buf.writeStringNT(entry[1].mode + ' ' + entry[0])
     buf.writeBuffer(gitUtil.cidToSha(entry[1].hash))
   })
 
-  let outBuf = new SmartBuffer()
+  const outBuf = new SmartBuffer()
   outBuf.writeString('tree ')
   outBuf.writeString(buf.length.toString())
   outBuf.writeUInt8(0)
@@ -30,17 +30,17 @@ exports.serialize = (dagNode) => {
 }
 
 exports.deserialize = (data) => {
-  let res = {}
-  let buf = SmartBuffer.fromBuffer(data, 'utf8')
+  const res = {}
+  const buf = SmartBuffer.fromBuffer(data, 'utf8')
 
   for (;;) {
-    let modeName = buf.readStringNT()
+    const modeName = buf.readStringNT()
     if (modeName === '') {
       break
     }
 
-    let hash = buf.readBuffer(gitUtil.SHA1_LENGTH)
-    let modNameMatched = modeName.match(/^(\d+) (.+)$/)
+    const hash = buf.readBuffer(gitUtil.SHA1_LENGTH)
+    const modNameMatched = modeName.match(/^(\d+) (.+)$/)
     if (!modNameMatched) {
       throw new Error('invalid file mode/name')
     }
