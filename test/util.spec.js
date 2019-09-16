@@ -59,8 +59,7 @@ describe('IPLD format util', () => {
   })
 
   it('.cid errors unknown hashAlg', async () => {
-    await expect(ipldGit.util.cid(tagNode, {
-      hashAlg: 0xffffff }
+    await expect(ipldGit.util.cid(tagNode, { hashAlg: 0xffffff }
     )).to.be.rejectedWith('Unrecognized function code: 16777215')
   })
 })
