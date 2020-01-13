@@ -1,3 +1,14 @@
+<a name="0.5.1"></a>
+## [0.5.1](https://github.com/ipld/js-ipld-git/compare/v0.5.0...v0.5.1) (2020-01-13)
+
+
+### Bug Fixes
+
+* **package:** update multicodec to version 1.0.0 ([6dbc3c8](https://github.com/ipld/js-ipld-git/commit/6dbc3c8))
+* **package:** update multihashing-async to version 0.8.0 ([fcf7f6f](https://github.com/ipld/js-ipld-git/commit/fcf7f6f))
+
+
+
 <a name="0.5.0"></a>
 # [0.5.0](https://github.com/ipld/js-ipld-git/compare/v0.4.0...v0.5.0) (2019-05-10)
 
