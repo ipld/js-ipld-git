@@ -9,7 +9,7 @@ chai.use(chaiAsProised)
 chai.use(dirtyChai)
 const ipldGit = require('../src')
 const multicodec = require('multicodec')
-const multihash = require('multihashes')
+const multihash = require('multihashing-async').multihash
 const CID = require('cids')
 
 describe('IPLD format util', () => {
