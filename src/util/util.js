@@ -1,13 +1,12 @@
 'use strict'
 
-const multihashes = require('multihashes/src/constants')
-const multihash = require('multihashes')
+const multihash = require('multihashing-async').multihash
 const CID = require('cids')
 const strftime = require('strftime')
 
 exports = module.exports
 
-exports.SHA1_LENGTH = multihashes.defaultLengths[multihashes.names.sha1]
+exports.SHA1_LENGTH = 20
 
 exports.find = (buf, byte) => {
   for (let i = 0; i < buf.length; i++) {
