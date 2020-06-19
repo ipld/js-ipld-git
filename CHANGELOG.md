@@ -1,3 +1,14 @@
+<a name="0.5.2"></a>
+## [0.5.2](https://github.com/ipld/js-ipld-git/compare/v0.5.1...v0.5.2) (2020-06-19)
+
+
+### Bug Fixes
+
+* multihashes does not export default lengths any more ([4f85c53](https://github.com/ipld/js-ipld-git/commit/4f85c53)), closes [/github.com/multiformats/js-multihash/pull/76#issuecomment-646561123](https://github.com//github.com/multiformats/js-multihash/pull/76/issues/issuecomment-646561123)
+* **package:** update cids to version 0.8.0 ([9da8893](https://github.com/ipld/js-ipld-git/commit/9da8893))
+
+
+
 <a name="0.5.1"></a>
 ## [0.5.1](https://github.com/ipld/js-ipld-git/compare/v0.5.0...v0.5.1) (2020-01-13)
 
