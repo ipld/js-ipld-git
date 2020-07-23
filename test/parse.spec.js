@@ -7,6 +7,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
+const { Buffer } = require('buffer')
 const loadFixture = require('aegir/fixtures')
 const zlib = require('zlib')
 const ipldGit = require('../src')
