@@ -3,6 +3,7 @@
 const multihashing = require('multihashing-async')
 const CID = require('cids')
 const multicodec = require('multicodec')
+const { Buffer } = require('buffer')
 
 const gitUtil = require('./util/util')
 

@@ -1,6 +1,7 @@
 'use strict'
 
 const SmartBuffer = require('smart-buffer').SmartBuffer
+const { Buffer } = require('buffer')
 const gitUtil = require('./util')
 
 exports = module.exports

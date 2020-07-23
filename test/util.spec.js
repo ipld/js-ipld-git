@@ -11,6 +11,7 @@ const ipldGit = require('../src')
 const multicodec = require('multicodec')
 const multihash = require('multihashing-async').multihash
 const CID = require('cids')
+const { Buffer } = require('buffer')
 
 describe('IPLD format util', () => {
   const tagNode = {
