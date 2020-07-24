@@ -1,6 +1,6 @@
 {
   "name": "ipld-git",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "JavaScript Implementation of Git IPLD format",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -50,19 +50,13 @@
     "dirty-chai": "^2.0.1"
   },
   "contributors": [
-    "Alan Shaw <alan.shaw@protocol.ai>",
-    "David Dias <daviddias.p@gmail.com>",
-    "Jonah Weissman <jonahrweissman@gmail.com>",
-    "Richard Schneider <makaretu@gmail.com>",
-    "Sameer Puri <sameer@users.noreply.github.com>",
-    "Sameer Puri <11097096+sameer@users.noreply.github.com>",
-    "Victor Bjelkholm <victorbjelkholm@gmail.com>",
     "Volker Mische <volker.mische@gmail.com>",
-    "achingbrain <alex@achingbrain.net>",
-    "greenkeeper[bot] <23040076+greenkeeper[bot]@users.noreply.github.com>",
-    "greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>",
-    "phillmac <phillmac@users.noreply.github.com>",
+    "David Dias <daviddias.p@gmail.com>",
     "Łukasz Magiera <magik6k@gmail.com>",
-    "Łukasz Magiera <magik6k@users.noreply.github.com>"
+    "Richard Schneider <makaretu@gmail.com>",
+    "Jonah Weissman <jonahrweissman@gmail.com>",
+    "achingbrain <alex@achingbrain.net>",
+    "Victor Bjelkholm <victorbjelkholm@gmail.com>",
+    "Alan Shaw <alan.shaw@protocol.ai>"
   ]
 }
