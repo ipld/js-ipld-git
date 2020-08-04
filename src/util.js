@@ -4,6 +4,7 @@ const multihashing = require('multihashing-async')
 const CID = require('cids')
 const multicodec = require('multicodec')
 const { Buffer } = require('buffer')
+const uint8ArrayToString = require('uint8arrays/to-string')
 
 const gitUtil = require('./util/util')
 
@@ -28,7 +29,7 @@ exports.serialize = (dagNode) => {
   }
 
   if (dagNode instanceof Uint8Array) {
-    if (dagNode.slice(0, 4).toString() === 'blob') {
+    if (uint8ArrayToString(dagNode.slice(0, 4)) === 'blob') {
       return dagNode
     } else {
       throw new Error('unexpected dagNode passed to serialize')

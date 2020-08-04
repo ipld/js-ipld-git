@@ -41,7 +41,8 @@
     "multicodec": "^2.0.0",
     "multihashing-async": "^2.0.0",
     "smart-buffer": "^4.1.0",
-    "strftime": "^0.10.0"
+    "strftime": "^0.10.0",
+    "uint8arrays": "^1.0.0"
   },
   "devDependencies": {
     "aegir": "^25.0.0"

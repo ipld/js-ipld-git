@@ -7,6 +7,7 @@ const multicodec = require('multicodec')
 const multihash = require('multihashing-async').multihash
 const CID = require('cids')
 const { Buffer } = require('buffer')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 describe('IPLD format util', () => {
   const tagNode = {
@@ -23,6 +24,13 @@ describe('IPLD format util', () => {
   }
   const tagBlob = ipldGit.util.serialize(tagNode)
 
+  it('.serialize from Uint8Array', () => {
+    const node = uint8ArrayFromString('blob-blob')
+    const blob = ipldGit.util.serialize(node)
+
+    expect(blob).to.deep.equal(node)
+  })
+
   it('.serialize and .deserialize', () => {
     expect(Buffer.isBuffer(tagBlob)).to.be.true()
     const deserialized = ipldGit.util.deserialize(tagBlob)
@@ -35,8 +43,8 @@ describe('IPLD format util', () => {
   })
 
   it('.serialize and .deserialize Uint8Array', () => {
-    expect(Buffer.isBuffer(tagBlob)).to.be.true()
-    const deserialized = ipldGit.util.deserialize(Uint8Array.from(tagBlob))
+    expect(Buffer.isBuffer(Uint8Array.of(...tagBlob))).to.be.false()
+    const deserialized = ipldGit.util.deserialize(Uint8Array.of(...tagBlob))
 
     // The `gitType` is not enumerable, hence `eql()` would find it. Thus
     // remove that property so that that check passes
