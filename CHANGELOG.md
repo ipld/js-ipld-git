@@ -1,3 +1,19 @@
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/ipld/js-ipld-git/compare/v0.5.3...v0.6.0) (2020-08-04)
+
+
+### Bug Fixes
+
+* replace node buffers with uint8arrays ([#70](https://github.com/ipld/js-ipld-git/issues/70)) ([8c999ba](https://github.com/ipld/js-ipld-git/commit/8c999ba))
+
+
+### BREAKING CHANGES
+
+* - `util.serialize` returns a `Uint8Array`
+- `util.cid` returns `CID`s with a breaking API change - see https://github.com/multiformats/js-cid/pull/117 for changes
+
+
+
 <a name="0.5.3"></a>
 ## [0.5.3](https://github.com/ipld/js-ipld-git/compare/v0.5.2...v0.5.3) (2020-07-24)
 
