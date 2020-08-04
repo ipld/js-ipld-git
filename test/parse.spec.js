@@ -3,10 +3,7 @@
 
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const { Buffer } = require('buffer')
 const loadFixture = require('aegir/fixtures')
 const zlib = require('zlib')

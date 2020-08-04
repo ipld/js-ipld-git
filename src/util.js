@@ -20,14 +20,14 @@ exports.defaultHashAlg = multicodec.SHA1
  * Serialize internal representation into a binary Git block.
  *
  * @param {GitBlock} dagNode - Internal representation of a Git block
- * @returns {Buffer}
+ * @returns {Uint8Array}
  */
 exports.serialize = (dagNode) => {
   if (dagNode === null) {
     throw new Error('dagNode passed to serialize was null')
   }
 
-  if (Buffer.isBuffer(dagNode)) {
+  if (dagNode instanceof Uint8Array) {
     if (dagNode.slice(0, 4).toString() === 'blob') {
       return dagNode
     } else {
@@ -49,10 +49,14 @@ exports.serialize = (dagNode) => {
 /**
  * Deserialize Git block into the internal representation.
  *
- * @param {Buffer} data - Binary representation of a Git block.
+ * @param {Uint8Array} data - Binary representation of a Git block.
  * @returns {BitcoinBlock}
  */
 exports.deserialize = (data) => {
+  if (!Buffer.isBuffer(data)) {
+    data = Buffer.from(data, data.byteOffset, data.byteLength)
+  }
+
   const headLen = gitUtil.find(data, 0)
   const head = data.slice(0, headLen).toString()
   const typeLen = head.match(/([^ ]+) (\d+)/)
