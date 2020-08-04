@@ -4,6 +4,7 @@ const multihashing = require('multihashing-async')
 const CID = require('cids')
 const multicodec = require('multicodec')
 const { Buffer } = require('buffer')
+const uint8ArrayToString = require('uint8arrays/to-string')
 
 const gitUtil = require('./util/util')
 
@@ -20,15 +21,15 @@ exports.defaultHashAlg = multicodec.SHA1
  * Serialize internal representation into a binary Git block.
  *
  * @param {GitBlock} dagNode - Internal representation of a Git block
- * @returns {Buffer}
+ * @returns {Uint8Array}
  */
 exports.serialize = (dagNode) => {
   if (dagNode === null) {
     throw new Error('dagNode passed to serialize was null')
   }
 
-  if (Buffer.isBuffer(dagNode)) {
-    if (dagNode.slice(0, 4).toString() === 'blob') {
+  if (dagNode instanceof Uint8Array) {
+    if (uint8ArrayToString(dagNode.slice(0, 4)) === 'blob') {
       return dagNode
     } else {
       throw new Error('unexpected dagNode passed to serialize')
@@ -49,10 +50,14 @@ exports.serialize = (dagNode) => {
 /**
  * Deserialize Git block into the internal representation.
  *
- * @param {Buffer} data - Binary representation of a Git block.
+ * @param {Uint8Array} data - Binary representation of a Git block.
  * @returns {BitcoinBlock}
  */
 exports.deserialize = (data) => {
+  if (!Buffer.isBuffer(data)) {
+    data = Buffer.from(data, data.byteOffset, data.byteLength)
+  }
+
   const headLen = gitUtil.find(data, 0)
   const head = data.slice(0, headLen).toString()
   const typeLen = head.match(/([^ ]+) (\d+)/)

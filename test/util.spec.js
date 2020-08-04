@@ -1,17 +1,13 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const chaiAsProised = require('chai-as-promised')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(chaiAsProised)
-chai.use(dirtyChai)
+const { expect } = require('aegir/utils/chai')
 const ipldGit = require('../src')
 const multicodec = require('multicodec')
 const multihash = require('multihashing-async').multihash
 const CID = require('cids')
 const { Buffer } = require('buffer')
+const uint8ArrayFromString = require('uint8arrays/from-string')
 
 describe('IPLD format util', () => {
   const tagNode = {
@@ -28,9 +24,27 @@ describe('IPLD format util', () => {
   }
   const tagBlob = ipldGit.util.serialize(tagNode)
 
+  it('.serialize from Uint8Array', () => {
+    const node = uint8ArrayFromString('blob-blob')
+    const blob = ipldGit.util.serialize(node)
+
+    expect(blob).to.deep.equal(node)
+  })
+
   it('.serialize and .deserialize', () => {
     expect(Buffer.isBuffer(tagBlob)).to.be.true()
     const deserialized = ipldGit.util.deserialize(tagBlob)
+
+    // The `gitType` is not enumerable, hence `eql()` would find it. Thus
+    // remove that property so that that check passes
+    const expected = Object.assign({}, tagNode)
+    delete expected.gitType
+    expect(deserialized).to.eql(expected)
+  })
+
+  it('.serialize and .deserialize Uint8Array', () => {
+    expect(Buffer.isBuffer(Uint8Array.of(...tagBlob))).to.be.false()
+    const deserialized = ipldGit.util.deserialize(Uint8Array.of(...tagBlob))
 
     // The `gitType` is not enumerable, hence `eql()` would find it. Thus
     // remove that property so that that check passes
