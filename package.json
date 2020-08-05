@@ -39,7 +39,7 @@
     "buffer": "^5.6.0",
     "cids": "^1.0.0",
     "multicodec": "^2.0.0",
-    "multihashing-async": "^2.0.0",
+    "multihashing-async": "^2.0.1",
     "smart-buffer": "^4.1.0",
     "strftime": "^0.10.0",
     "uint8arrays": "^1.0.0"
