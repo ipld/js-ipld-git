@@ -1,3 +1,13 @@
+<a name="0.6.1"></a>
+## [0.6.1](https://github.com/ipld/js-ipld-git/compare/v0.6.0...v0.6.1) (2020-08-05)
+
+
+### Bug Fixes
+
+* convert output of multihash.decode to buffer ([20dd68f](https://github.com/ipld/js-ipld-git/commit/20dd68f))
+
+
+
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/ipld/js-ipld-git/compare/v0.5.3...v0.6.0) (2020-08-04)
 
