@@ -3,6 +3,7 @@
 const multihash = require('multihashing-async').multihash
 const CID = require('cids')
 const strftime = require('strftime')
+const { Buffer } = require('buffer')
 
 exports = module.exports
 
@@ -65,5 +66,5 @@ exports.cidToSha = (cid) => {
     return null
   }
 
-  return mh.digest
+  return Buffer.from(mh.digest.buffer, mh.digest.byteOffset, mh.digest.byteLength)
 }

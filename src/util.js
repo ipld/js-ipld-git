@@ -55,7 +55,7 @@ exports.serialize = (dagNode) => {
  */
 exports.deserialize = (data) => {
   if (!Buffer.isBuffer(data)) {
-    data = Buffer.from(data, data.byteOffset, data.byteLength)
+    data = Buffer.from(data.buffer, data.byteOffset, data.byteLength)
   }
 
   const headLen = gitUtil.find(data, 0)

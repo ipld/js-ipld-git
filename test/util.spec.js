@@ -31,6 +31,19 @@ describe('IPLD format util', () => {
     expect(blob).to.deep.equal(node)
   })
 
+  it('.serialize from tree', () => {
+    const node = {
+      'file.txt': {
+        hash: new CID('baf4bcfe5cqe5giojiciib5mci7gbb53xcxqot2i'),
+        mode: '644'
+      }
+    }
+    const blob = ipldGit.util.serialize(node)
+    const deserialized = ipldGit.util.deserialize(blob)
+
+    expect(deserialized).to.deep.equal(node)
+  })
+
   it('.serialize and .deserialize', () => {
     expect(Buffer.isBuffer(tagBlob)).to.be.true()
     const deserialized = ipldGit.util.deserialize(tagBlob)
