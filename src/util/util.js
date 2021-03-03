@@ -5,11 +5,9 @@ const CID = require('cids')
 const strftime = require('strftime')
 const { Buffer } = require('buffer')
 
-exports = module.exports
+const SHA1_LENGTH = 20
 
-exports.SHA1_LENGTH = 20
-
-exports.find = (buf, byte) => {
+function find (buf, byte) {
   for (let i = 0; i < buf.length; i++) {
     if (buf[i] === byte) {
       return i
@@ -29,7 +27,7 @@ const isoStrictToTimestampWithOffset = (isoString) => {
   return strftime.timezone(offset)(TIMESTAMP_WITH_OFFSET, new Date(isoString))
 }
 
-exports.parsePersonLine = (line) => {
+function parsePersonLine (line) {
   const matched = line.match(/^(([^<]+)\s)?\s?<([^>]+)>\s?(?:(\d+)\s([+-]\d+))?$/)
   if (matched === null) {
     return null
@@ -42,7 +40,7 @@ exports.parsePersonLine = (line) => {
   }
 }
 
-exports.serializePersonLine = (node) => {
+function serializePersonLine (node) {
   const parts = []
   if (node.name) {
     parts.push(node.name)
@@ -55,16 +53,25 @@ exports.serializePersonLine = (node) => {
   return parts.join(' ')
 }
 
-exports.shaToCid = (buf) => {
+function shaToCid (buf) {
   const mh = multihash.encode(buf, 'sha1')
   return new CID(1, 'git-raw', mh)
 }
 
-exports.cidToSha = (cid) => {
+function cidToSha (cid) {
   const mh = multihash.decode(cid.multihash)
   if (mh.name !== 'sha1') {
     return null
   }
 
   return Buffer.from(mh.digest.buffer, mh.digest.byteOffset, mh.digest.byteLength)
+}
+
+module.exports = {
+  SHA1_LENGTH,
+  find,
+  parsePersonLine,
+  serializePersonLine,
+  shaToCid,
+  cidToSha
 }

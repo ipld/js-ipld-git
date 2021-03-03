@@ -3,9 +3,7 @@
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const gitUtil = require('./util')
 
-exports = module.exports
-
-exports.serialize = (dagNode) => {
+function serialize (dagNode) {
   const entries = []
   Object.keys(dagNode).forEach((name) => {
     entries.push([name, dagNode[name]])
@@ -29,7 +27,7 @@ exports.serialize = (dagNode) => {
   return outBuf.toBuffer()
 }
 
-exports.deserialize = (data) => {
+function deserialize (data) {
   const res = {}
   const buf = SmartBuffer.fromBuffer(data, 'utf8')
 
@@ -56,4 +54,9 @@ exports.deserialize = (data) => {
   }
 
   return res
+}
+
+module.exports = {
+  serialize,
+  deserialize
 }

@@ -5,7 +5,7 @@
 
 const { expect } = require('aegir/utils/chai')
 const { Buffer } = require('buffer')
-const loadFixture = require('aegir/fixtures')
+const loadFixture = require('aegir/utils/fixtures')
 const zlib = require('zlib')
 const ipldGit = require('../src')
 const util = require('../src/util/util')
