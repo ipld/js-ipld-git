@@ -1,7 +1,6 @@
 'use strict'
 
 const CID = require('cids')
-
 const util = require('./util')
 
 /**
@@ -12,13 +11,8 @@ const util = require('./util')
  *
  * @param {Uint8Array} binaryBlob - Binary representation of a Git block
  * @param {string} [path='/'] - Path that should be resolved
- * @returns {Object} result - Result of the path it it was resolved successfully
- * @returns {*} result.value - Value the path resolves to
- * @returns {string} result.remainderPath - If the path resolves half-way to a
- *   link, then the `remainderPath` is the part after the link that can be used
- *   for further resolving
  */
-exports.resolve = (binaryBlob, path) => {
+function resolve (binaryBlob, path) {
   let node = util.deserialize(binaryBlob)
 
   const parts = path.split('/').filter(Boolean)
@@ -43,7 +37,7 @@ exports.resolve = (binaryBlob, path) => {
   }
 }
 
-const traverse = function * (node, path) {
+function * traverse (node, path) {
   // Traverse only objects and arrays
   if (node instanceof Uint8Array || CID.isCID(node) || typeof node === 'string' ||
       node === null) {
@@ -63,8 +57,13 @@ const traverse = function * (node, path) {
  * @param {Uint8Array} binaryBlob - Binary representation of a Bitcoin block
  * @yields {string} - A single path
  */
-exports.tree = function * (binaryBlob) {
+function * tree (binaryBlob) {
   const node = util.deserialize(binaryBlob)
 
   yield * traverse(node)
+}
+
+module.exports = {
+  resolve,
+  tree
 }

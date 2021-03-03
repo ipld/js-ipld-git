@@ -4,9 +4,7 @@ const SmartBuffer = require('smart-buffer').SmartBuffer
 const { Buffer } = require('buffer')
 const gitUtil = require('./util')
 
-exports = module.exports
-
-exports.serialize = (dagNode) => {
+function serialize (dagNode) {
   const lines = []
   lines.push('object ' + gitUtil.cidToSha(dagNode.object).toString('hex'))
   lines.push('type ' + dagNode.type)
@@ -27,7 +25,7 @@ exports.serialize = (dagNode) => {
   return outBuf.toBuffer()
 }
 
-exports.deserialize = (data) => {
+function deserialize (data) {
   const lines = data.toString().split('\n')
   const res = { gitType: 'tag' }
 
@@ -64,4 +62,9 @@ exports.deserialize = (data) => {
   Object.defineProperty(res, 'gitType', { enumerable: false })
 
   return res
+}
+
+module.exports = {
+  serialize,
+  deserialize
 }
