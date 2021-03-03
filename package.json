@@ -12,8 +12,7 @@
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
-    "build": "aegir build",
-    "coverage": "aegir coverage"
+    "build": "aegir build"
   },
   "pre-push": [
     "lint",
