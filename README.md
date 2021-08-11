@@ -1,3 +1,6 @@
+⛔️ DEPRECATED: This module is no longer maintained. It can be used with [multiformats](https://github.com/multiformats/js-multiformats) by wrapping it with [ipld-format-to-blockcodec](https://github.com/ipld/js-ipld-format-to-blockcodec) <!-- omit in toc -->
+======
+
 # js-ipld-git
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
@@ -19,14 +22,17 @@
 
 ## Table of Contents
 
-- [Install](#install)
-  - [npm](#npm)
-  - [Use in Node.js](#use-in-nodejs)
-  - [Use in a browser with browserify, webpack or any other bundler](#use-in-a-browser-with-browserify-webpack-or-any-other-bundler)
-  - [Use in a browser Using a script tag](#use-in-a-browser-using-a-script-tag)
-- [Usage](#usage)
-- [Contribute](#contribute)
-- [License](#license)
+- [js-ipld-git](#js-ipld-git)
+  - [Lead Maintainer](#lead-maintainer)
+  - [Table of Contents](#table-of-contents)
+  - [Install](#install)
+    - [npm](#npm)
+    - [Use in Node.js](#use-in-nodejs)
+    - [Use in a browser with browserify, webpack or any other bundler](#use-in-a-browser-with-browserify-webpack-or-any-other-bundler)
+    - [Use in a browser Using a script tag](#use-in-a-browser-using-a-script-tag)
+  - [Usage](#usage)
+  - [Contribute](#contribute)
+  - [License](#license)
 
 ## Install
 
