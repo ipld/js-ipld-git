@@ -1,6 +1,6 @@
 {
   "name": "ipld-git",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "JavaScript Implementation of Git IPLD format",
   "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
   "main": "src/index.js",
@@ -53,11 +53,11 @@
   "contributors": [
     "Volker Mische <volker.mische@gmail.com>",
     "David Dias <daviddias.p@gmail.com>",
+    "achingbrain <alex@achingbrain.net>",
     "Łukasz Magiera <magik6k@gmail.com>",
     "Richard Schneider <makaretu@gmail.com>",
-    "achingbrain <alex@achingbrain.net>",
     "Jonah Weissman <jonahrweissman@gmail.com>",
-    "Victor Bjelkholm <victorbjelkholm@gmail.com>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
     "Alan Shaw <alan.shaw@protocol.ai>"
   ]
 }
