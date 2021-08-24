@@ -7,7 +7,7 @@ const multicodec = require('multicodec')
 const multihash = require('multihashing-async').multihash
 const CID = require('cids')
 const { Buffer } = require('buffer')
-const uint8ArrayFromString = require('uint8arrays/from-string')
+const { fromString: uint8ArrayFromString } = require('uint8arrays/from-string')
 
 describe('IPLD format util', () => {
   const tagNode = {
