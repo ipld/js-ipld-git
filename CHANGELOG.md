@@ -1,3 +1,7 @@
+## [0.6.6](https://github.com/ipld/js-ipld-git/compare/v0.6.5...v0.6.6) (2021-08-24)
+
+
+
 ## [0.6.5](https://github.com/ipld/js-ipld-git/compare/v0.6.4...v0.6.5) (2021-08-11)
 
 
