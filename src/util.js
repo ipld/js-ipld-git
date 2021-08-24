@@ -4,7 +4,7 @@ const multihashing = require('multihashing-async')
 const CID = require('cids')
 const multicodec = require('multicodec')
 const { Buffer } = require('buffer')
-const uint8ArrayToString = require('uint8arrays/to-string')
+const { toString: uint8ArrayToString } = require('uint8arrays/to-string')
 
 const gitUtil = require('./util/util')
 
